@@ -75,8 +75,19 @@ def DebugPumps():
     ser.close()
     print('finished')
 
+
+
 def DebugMarlin():
     port = ping_controller(serial_ports(),115200,b'ping','start\n')
+    ser = serial.Serial(        
+        port="/dev/ttyUSB0",
+        baudrate=115200       
+        )
+    ser.get_settings()
+    ser.readlines()
+    ser.write('M302 P1\n')
+    ser.write('G1 E11 F333')
+
 
 if __name__ == '__main__':
     DebugMarlin()
