@@ -31,15 +31,18 @@ def serial_ports():
 
 def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
     for port in ports:
+        print('port: ' + port)
         try:
             s = serial.Serial(port,baud,timeout=1)
             time.sleep(3)
             s.flush()
             s.write(qrymsg)
-            ret = s.read(10)
-            print(ret)
+            #ret = s.read(10).decode()
+            ret = s.readline().decode()
+            print('ret: ' + ret)
+            print('retmsg: ' + retmsg)
             if ret == retmsg:
-                print(s.name)
+                print('successfully connected to: '+s.name)
                 s.close()
                 return port
             else:
@@ -48,7 +51,7 @@ def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
             pass
     return -1
 
-def DebugFunc():
+def DebugPumps():
     print(serial_ports())
     print('starting serial test')
     ser = serial.Serial(
@@ -69,9 +72,11 @@ def DebugFunc():
             receivedmsg = True
         else:
             ser.write(command)
-
     ser.close()
     print('finished')
 
+def DebugMarlin():
+    port = ping_controller(serial_ports(),115200,b'ping','start\n')
+
 if __name__ == '__main__':
-    DebugFunc()
+    DebugMarlin()
