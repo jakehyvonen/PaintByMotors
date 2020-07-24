@@ -22,6 +22,7 @@ def serial_ports():
     result = []
     for port in ports:
         try:
+            print('found port: '+port)
             s = serial.Serial(port)
             s.close()
             result.append(port)
@@ -34,12 +35,13 @@ def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
     for port in ports:
         print('port: ' + port)
         try:
-            s = serial.Serial(port,baud,timeout=1)
+            s = serial.Serial(port,baud,timeout=1,write_timeout=1)
             time.sleep(3)
             s.flush()
             s.write(qrymsg)
             #ret = s.read(10).decode()
-            ret = s.readline().decode()
+            ret = s.readline()
+            ret = ret.decode()
             print('ret: ' + ret)
             print('retmsg: ' + retmsg)
             if ret == retmsg:
@@ -81,14 +83,14 @@ def DebugPumps():
 
 def DebugMarlin():
     port = ping_controller(serial_ports(),115200,b'ping','start\n')
-    ser = serial.Serial(        
+    """ ser = serial.Serial(        
         port="/dev/ttyUSB0",
         baudrate=115200       
         )
     ser.get_settings()
     ser.readlines()
     ser.write('M302 P1\n')
-    ser.write('G1 E11 F333')
+    ser.write('G1 E11 F333') """
 
 
 if __name__ == '__main__':
