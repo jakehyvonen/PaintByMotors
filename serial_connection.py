@@ -30,6 +30,7 @@ def serial_ports():
     return result
 
 def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
+    print('pinging serial with: ' + qrymsg.decode())
     for port in ports:
         print('port: ' + port)
         try:
@@ -49,6 +50,7 @@ def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
                 s.close()
         except (OSError, serial.SerialException):
             pass
+    print('no response to ping')
     return -1
 
 def DebugPumps():
