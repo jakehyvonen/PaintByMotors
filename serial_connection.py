@@ -79,6 +79,35 @@ def DebugPumps():
     ser.close()
     print('finished')
 
+def DebugRoboArm():
+    ser = serial.Serial(        
+        port="/dev/ttyACM0",
+        baudrate=9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=1,
+        write_timeout=1   
+        )
+    ser.flush()
+    #ser.readlines()
+    i = 0
+    while i <11:
+        if ser.in_waiting == 0:
+            ser.write(b'ping')
+        print('response: '+ser.readline().decode().rstrip())
+        i += 1
+
+"""     ser.write(b'ping')
+    print('response: '+ser.readline().decode().rstrip())
+    print('response: '+ser.readline().decode())
+    print('response: '+ser.readline().decode())
+    ser.write(b'ping')
+    print('response: '+ser.readline().decode())
+    print('response: '+ser.readline().decode())
+    print('response: '+ser.readline().decode()) """
+    #ser.write('G1 E11 F333')
+    #ping_controller(serial_ports(),9600,b'ping','pong\n')
 
 
 def DebugMarlin():
@@ -94,4 +123,4 @@ def DebugMarlin():
 
 
 if __name__ == '__main__':
-    DebugMarlin()
+    DebugRoboArm()

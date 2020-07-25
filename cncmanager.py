@@ -35,7 +35,7 @@ class CNCManager:
                 SerialBufferIsClear = True
                 print("got the ok")
 
-    def SendCommandToCNC(self, com,shouldwaitforok = True):        
+    def SendCommand(self, com,shouldwaitforok = True):        
         if ser.is_open:
             print('sending command: ' + com)
             command = str(com)+"\n"
@@ -50,7 +50,7 @@ class CNCManager:
 if __name__ == '__main__':
     manager = CNCManager()
     manager.connect_to_controller()
-    manager.SendCommandToCNC('M302 P1')
+    manager.SendCommand('M302 P1')
 
     """ #setup communication with Arduino Mega CNC controllers
     ser = serial.Serial(
