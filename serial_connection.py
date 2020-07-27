@@ -44,14 +44,13 @@ qrymsg=b'ping', retmsg='pong', trycount = 1):
                 try:
                     i += 1
                     s.write(qrymsg)
-                    #ret = s.read(10).decode()
                     ret = s.readline()
                     ret = ret.decode().rstrip()
                     print('ret: ' + ret)
                     #print('retmsg: ' + retmsg)
                     if ret == retmsg:
                         print('successfully connected to: '+s.name)
-                        s.close()
+                        #s.close()
                         return port
                 except:
                     pass

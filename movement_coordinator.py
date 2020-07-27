@@ -3,6 +3,8 @@ import cnc_manager as c_m
 import serial_connection as s_c
 
 PositionsDict = {}
+cnc_ma = c_m.CNCManager()
+ra_ma = r_m.RoboArmManager()
 
 class SystemPosition:
     def __init__(self, M2, M3, M4, M5, X, Y, Z, E):
@@ -21,18 +23,25 @@ def PopulatePositionsDict():
     PositionsDict = {'Neutral': NeutralPosition,}
 
 def EstablishConnections():
-
-if __name__ == '__main__':
-    ports = s_c.serial_ports()
-    ra_ma = r_m.RoboArmManager()
-    portToRemove = ra_ma.connect_to_controller(ports)
-    print('removing port: ' + portToRemove)
-    ports.remove(portToRemove)
-    cnc_ma = c_m.CNCManager()
+    global cnc_ma, ra_ma
+    ports = s_c.serial_ports()    
     portToRemove = cnc_ma.connect_to_controller(ports)
     ports.remove(portToRemove)
     print('removing port: ' + portToRemove)
+    portToRemove = ra_ma.connect_to_controller(ports)
+    print('removing port: ' + portToRemove)
+    ports.remove(portToRemove)
+
+if __name__ == '__main__':    
+    EstablishConnections()
     while True:
-        var = input("Please enter a command: ")
-        print("entered: "+str(var))
-        ra_ma.SendCommand(str(var))
+        var = input("Enter c for cnc and r for roboarm command: ")
+        print("Entered: "+var)
+        if(var == 'c'):
+            com = input('Please enter CNC command: ')
+            cnc_ma.SendCommand(com)
+        elif(var == 'r'):
+            com = input('Please enter roboarm command: ')
+            ra_ma.SendCommand(com)
+        else:
+            print('Enter one of the valid letters you silly goose')
