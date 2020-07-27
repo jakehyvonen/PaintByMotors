@@ -36,19 +36,23 @@ void loop() {
     //Serial.println(command);
     if(command.substring(0,5)=="servo")
     {
-      String parseString = command.substring(5,7);
+      String parseString = command.substring(5,8);
       int M2 = parseString.toInt();
       //Serial.print("M2: " + String(M2));
-      parseString = command.substring(7,9);
+      parseString = command.substring(8,11);
       int M3 = parseString.toInt();
       //Serial.print(" M3: " + String(M3));
-      parseString = command.substring(9,11);
+      parseString = command.substring(11,14);
       int M4 = parseString.toInt();
       //Serial.print(" M4: " + String(M4));
-      parseString = command.substring(11,13);
+      parseString = command.substring(14,17);
       int M5 = parseString.toInt();
       //Serial.print(" M5: " + String(M5));
       Braccio.ServoMovement(11, 45, M2, M3, M4, M5, 73);  
+    }
+    if(command.substring(0,4)=="ping")
+    {
+      Serial.println("pong");
     }
   }
 }
