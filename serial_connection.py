@@ -30,24 +30,31 @@ def serial_ports():
             pass
     return result
 
-def ping_controller(ports, baud=9600, qrymsg=b'ping', retmsg='pong'):
-    print('pinging serial with: ' + qrymsg.decode())
+def ping_controller(ports, baud=9600, 
+qrymsg=b'ping', retmsg='pong', trycount = 1):
+    print('pinging serial with qrymsg: ' + qrymsg.decode())
     for port in ports:
-        print('port: ' + port)
+        print('testing port: ' + port)
         try:
             s = serial.Serial(port,baud,timeout=1,write_timeout=1)
-            time.sleep(3)
+            time.sleep(1)
             s.flush()
-            s.write(qrymsg)
-            #ret = s.read(10).decode()
-            ret = s.readline()
-            ret = ret.decode()
-            print('ret: ' + ret)
-            print('retmsg: ' + retmsg)
-            if ret == retmsg:
-                print('successfully connected to: '+s.name)
-                s.close()
-                return port
+            i = 0
+            while i <= trycount:
+                try:
+                    i += 1
+                    s.write(qrymsg)
+                    #ret = s.read(10).decode()
+                    ret = s.readline()
+                    ret = ret.decode().rstrip()
+                    print('ret: ' + ret)
+                    #print('retmsg: ' + retmsg)
+                    if ret == retmsg:
+                        print('successfully connected to: '+s.name)
+                        s.close()
+                        return port
+                except:
+                    pass
             else:
                 s.close()
         except (OSError, serial.SerialException):
@@ -97,17 +104,6 @@ def DebugRoboArm():
             ser.write(b'ping')
         print('response: '+ser.readline().decode().rstrip())
         i += 1
-
-"""     ser.write(b'ping')
-    print('response: '+ser.readline().decode().rstrip())
-    print('response: '+ser.readline().decode())
-    print('response: '+ser.readline().decode())
-    ser.write(b'ping')
-    print('response: '+ser.readline().decode())
-    print('response: '+ser.readline().decode())
-    print('response: '+ser.readline().decode()) """
-    #ser.write('G1 E11 F333')
-    #ping_controller(serial_ports(),9600,b'ping','pong\n')
 
 
 def DebugMarlin():

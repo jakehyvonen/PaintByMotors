@@ -17,7 +17,7 @@ class RoboArmManager:
             print('already connected')
         else:
             print('attempting to connect...')
-            s = sc.ping_controller(sc.serial_ports(), 9600, b'ping','pong\n')        
+            s = sc.ping_controller(sc.serial_ports(), 9600, b'ping','pong',11)        
             if s == -1:
                 return -1
             else:
@@ -38,3 +38,7 @@ if __name__ == '__main__':
     manager = RoboArmManager()
     manager.connect_to_controller()
     manager.SendCommand('servo90909090')
+    while True:
+        var = input("Please enter a command:")
+        print("entered: "+str(var))
+        manager.SendCommand(str(var))
