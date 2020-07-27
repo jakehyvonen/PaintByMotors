@@ -1,5 +1,6 @@
-import roboarm
-import cnc_manager
+import roboarm_manager as r_m
+import cnc_manager as c_m
+import serial_connection as s_c
 
 PositionsDict = {}
 
@@ -19,9 +20,19 @@ def PopulatePositionsDict():
     NeutralPosition = SystemPosition(45,45,45,45,11,11,11,0)
     PositionsDict = {'Neutral': NeutralPosition,}
 
+def EstablishConnections():
 
 if __name__ == '__main__':
-    ra_ma = roboarm.roboarm_manager.RoboArmManager()
-    ra_ma.connect_to_controller()
-    cnc_ma = cnc_manager.CNCManager()
-    cnc_ma.connect_to_controller()
+    ports = s_c.serial_ports()
+    ra_ma = r_m.RoboArmManager()
+    portToRemove = ra_ma.connect_to_controller(ports)
+    print('removing port: ' + portToRemove)
+    ports.remove(portToRemove)
+    cnc_ma = c_m.CNCManager()
+    portToRemove = cnc_ma.connect_to_controller(ports)
+    ports.remove(portToRemove)
+    print('removing port: ' + portToRemove)
+    while True:
+        var = input("Please enter a command: ")
+        print("entered: "+str(var))
+        ra_ma.SendCommand(str(var))

@@ -22,7 +22,7 @@ void setup() {
   Serial.begin(9600);
   //Serial.println("not sure if I'm sane");
   Braccio.begin();
-  Braccio.ServoMovement(11, 45, 45, 45, 45, 45, 73);  
+  Braccio.ServoMovement(11, 90, 90, 90, 90, 90, 73);  
 }
 
 void loop() {
