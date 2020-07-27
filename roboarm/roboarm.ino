@@ -20,9 +20,9 @@ void setup() {
   //Wrist rotation (M5): 90 degrees
   //gripper (M6): 10 degrees
   Serial.begin(9600);
-  Serial.println("not sure if I'm sane");
-
+  //Serial.println("not sure if I'm sane");
   Braccio.begin();
+  Braccio.ServoMovement(11, 45, 45, 45, 45, 45, 73);  
 }
 
 void loop() {
@@ -32,18 +32,22 @@ void loop() {
   serialResult = readSerialInputCommand(&command);  
   if (serialResult == MSG_METHOD_SUCCESS)
   {
-    Serial.println("Got a message:");
-    Serial.println(command);
+    //Serial.println("Got a message:");
+    //Serial.println(command);
     if(command.substring(0,5)=="servo")
     {
-      String parseString = command.substring(5,8);
+      String parseString = command.substring(5,7);
       int M2 = parseString.toInt();
-      parseString = command.substring(8,11);
+      //Serial.print("M2: " + String(M2));
+      parseString = command.substring(7,9);
       int M3 = parseString.toInt();
-      parseString = command.substring(11,14);
+      //Serial.print(" M3: " + String(M3));
+      parseString = command.substring(9,11);
       int M4 = parseString.toInt();
-      parseString = command.substring(14,17);
+      //Serial.print(" M4: " + String(M4));
+      parseString = command.substring(11,13);
       int M5 = parseString.toInt();
+      //Serial.print(" M5: " + String(M5));
       Braccio.ServoMovement(11, 45, M2, M3, M4, M5, 73);  
     }
   }
@@ -68,4 +72,3 @@ int readSerialInputCommand(String *command)
   }
   return operationStatus;
 }
-
