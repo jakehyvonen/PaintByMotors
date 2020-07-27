@@ -37,8 +37,8 @@ class RoboArmManager:
 if __name__ == '__main__':
     manager = RoboArmManager()
     manager.connect_to_controller()
-    manager.SendCommand('servo90909090')
+    manager.SendCommand('servo090090090090')
     while True:
-        var = input("Please enter a command:")
+        var = input("Please enter a command: ")
         print("entered: "+str(var))
         manager.SendCommand(str(var))
