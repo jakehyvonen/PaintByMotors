@@ -25,13 +25,14 @@ class SystemPosition:
 def PopulatePositionsDict():
     global PositionsDict
     Neutral = SystemPosition(90,90,90,90,0,0,151,0)
-    LoadingA = SystemPosition(15,111,0,90,47,0,151,0)
-    LoadingB = SystemPosition(15,111,0,90,47,0,11,0)
-    LoadingC = SystemPosition(15,97,0,90,47,0,11,0)
-    LoadingD = SystemPosition(15,97,0,90,47,0,151,0)
+    LoadingA = SystemPosition(11,111,0,90,47,0,151,0)
+    LoadingB = SystemPosition(11,111,0,90,47,0,7,0)
+    LoadingC = SystemPosition(11,88,0,90,47,0,7,0)
+    LoadingD = SystemPosition(11,88,0,90,47,0,151,0)
 
     PositionsDict = {'Neutral':Neutral, 'LoadingA': LoadingA,
     'LoadingB':LoadingB,'LoadingC':LoadingC,'LoadingD':LoadingD}
+
 
 def Setup():
     global cnc_ma, ra_ma
@@ -51,15 +52,27 @@ def SetPosition(pos):
     ra_ma.SetPosition('set',pos)
     cnc_ma.SetPosition(pos)
 
+def LoadSubstrateHolder():
+    global PositionsDict
+    SetPosition(PositionsDict['LoadingA'])
+    SetPosition(PositionsDict['LoadingB'])
+    SetPosition(PositionsDict['LoadingC'])
+    SetPosition(PositionsDict['LoadingD'])
+    SetPosition(PositionsDict['Neutral'])
+
+ActionsDict = {'Load':LoadSubstrateHolder,}
+
 if __name__ == '__main__':    
     Setup()
     while True:
-        var = input('Enter echo get set for roboarm, else CNC: ')
+        var = input('Please enter a command: ')
         print('Entered: ' + var)
         if('echo' in var or 'get' in var or 'set' in var):
             ra_ma.SendCommand(var)
         elif(var in PositionsDict.keys()):
             SetPosition(PositionsDict[var])
+        elif(var in ActionsDict.keys()):
+            ActionsDict[var]()
         else:
             cnc_ma.SendCommand(var)
 
