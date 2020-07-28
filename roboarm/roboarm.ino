@@ -9,7 +9,7 @@ Servo elbow;
 Servo wrist_rot;
 Servo wrist_ver;
 Servo gripper;
-
+int del=11, M1=90, M2=90, M3=90, M4=90, M5=90, M6=73;
 void setup() {  
   //Initialization functions and set up the initial position for Braccio
   //All the servo motors will be positioned in the "safety" position:
@@ -22,7 +22,7 @@ void setup() {
   Serial.begin(9600);
   //Serial.println("not sure if I'm sane");
   Braccio.begin();
-  Braccio.ServoMovement(11, 90, 90, 90, 90, 90, 73);  
+  Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
 }
 
 void loop() {
@@ -34,26 +34,49 @@ void loop() {
   {
     //Serial.println("Got a message:");
     //Serial.println(command);
-    if(command.substring(0,5)=="servo")
+    //servos M1 and M6 are not physically used
+    //so we only interact with M2-M5 values
+    if(command.substring(0,4)=="echo")
     {
-      String parseString = command.substring(5,8);
-      int M2 = parseString.toInt();
-      //Serial.print("M2: " + String(M2));
-      parseString = command.substring(8,11);
-      int M3 = parseString.toInt();
-      //Serial.print(" M3: " + String(M3));
-      parseString = command.substring(11,14);
-      int M4 = parseString.toInt();
-      //Serial.print(" M4: " + String(M4));
-      parseString = command.substring(14,17);
-      int M5 = parseString.toInt();
-      //Serial.print(" M5: " + String(M5));
-      Braccio.ServoMovement(11, 45, M2, M3, M4, M5, 73);  
+      String parseString = command.substring(4,7);
+      M2 = parseString.toInt();
+      parseString = command.substring(7,10);
+      M3 = parseString.toInt();
+      parseString = command.substring(10,13);
+      M4 = parseString.toInt();
+      parseString = command.substring(13,16);
+      M5 = parseString.toInt();
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+      Serial.println(String(M2)+","+String(M3)+","+String(M4)+","+String(M5));
     }
-    if(command.substring(0,4)=="ping")
+    else if(command.substring(0,3)=="get")
+    {
+      Serial.println(String(M2)+","+String(M3)+","+String(M4)+","+String(M5));
+    }     
+    else if(command.substring(0,4)=="ping")
     {
       Serial.println("pong");
     }
+    else if(command.substring(0,3)=="set")
+    {
+      String parseString = command.substring(3,6);
+      M2 = parseString.toInt();
+      //Serial.print("M2: " + String(M2));
+      parseString = command.substring(6,9);
+      M3 = parseString.toInt();
+      //Serial.print(" M3: " + String(M3));
+      parseString = command.substring(9,12);
+      M4 = parseString.toInt();
+      //Serial.print(" M4: " + String(M4));
+      parseString = command.substring(12,15);
+      M5 = parseString.toInt();
+      //Serial.print(" M5: " + String(M5));
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+    }
+    else
+    {
+      Serial.println("Unrecognized command. Please check roboarm.ino for reference");
+    }   
   }
 }
 

@@ -23,8 +23,8 @@ def serial_ports():
     for port in ports:
         try:
             print('found port: '+port)
-            s = serial.Serial(port)
-            s.close()
+            #s = serial.Serial(port)
+            #s.close()
             result.append(port)
         except (OSError, serial.SerialException):
             pass
