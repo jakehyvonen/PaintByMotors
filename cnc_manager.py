@@ -17,7 +17,7 @@ class CNCManager:
             print('already connected')
         else:
             print('attempting to connect...')
-            s = sc.ping_controller(ports, 115200, b'ping','start')        
+            s = sc.ping_controller(ports, 115200, b'ping','echo:start')        
             if s == -1:
                 return -1
             else:
@@ -26,15 +26,15 @@ class CNCManager:
                 ser.readlines()
                 return s
     
-    def WaitForOk(self):
+    def WaitForResponse(self,response = 'ok'):
         ser.reset_input_buffer()
         SerialBufferIsClear = False
         while(SerialBufferIsClear != True):
             MarlinMessage = ser.readline().decode().rstrip()
             print(MarlinMessage)
-            if("ok" in MarlinMessage):
+            if(response in MarlinMessage):
                 SerialBufferIsClear = True
-                print("got the ok")
+                print("got the response: " + response)
 
     def SendCommand(self, com,shouldwaitforok = True):        
         if ser.is_open:
@@ -42,9 +42,9 @@ class CNCManager:
             command = str(com)+"\n"
             ser.write(command.encode())
             if shouldwaitforok:
-                self.WaitForOk()
+                self.WaitForResponse()
                 ser.write('M84\n'.encode())#workaround to trigger busy:processing response from Marlin
-                self.WaitForOk()
+                self.WaitForResponse()
         else:
             print('serial not open')
 
@@ -55,6 +55,7 @@ class CNCManager:
         self.SendCommand('M302 P1')
         
     def SetInitialState(self):
+        self.WaitForResponse('SD card')
         self.SendCommand('G28 X0 Z0')
         self.SetupMarlin()
         self.SendCommand('G1 Z151')

@@ -3,9 +3,8 @@ import cnc_manager as c_m
 import serial_connection as s_c
 
 """ ToDo:
--multithreading to allow concurrent movement of roboarm + cnc + pumps
--clean up serial connection stuff (roboarm port gets opened multiple times which is annoying)
--calibrate positions for loading and unloading substrate holders
+-multithread to allow concurrent movement of roboarm + cnc + pumps?
+-calibrate positions for load and unload substrate holders
  """
 PositionsDict = {}
 cnc_ma = c_m.CNCManager()
@@ -25,13 +24,16 @@ class SystemPosition:
 def PopulatePositionsDict():
     global PositionsDict
     Neutral = SystemPosition(90,90,90,90,0,0,151,0)
-    LoadingA = SystemPosition(11,111,0,90,47,0,151,0)
-    LoadingB = SystemPosition(11,111,0,90,47,0,7,0)
-    LoadingC = SystemPosition(11,88,0,90,47,0,7,0)
-    LoadingD = SystemPosition(11,88,0,90,47,0,151,0)
+    LoadA = SystemPosition(11,111,0,90,47,0,151,0)
+    LoadB = SystemPosition(11,111,0,90,47,0,7,0)
+    LoadC = SystemPosition(11,88,0,90,47,0,7,0)
+    LoadD = SystemPosition(11,88,0,90,47,0,151,0)
+    UnloadA = SystemPosition(171,90,167,90,33,0,151,0)
+    UnloadB = SystemPosition(171,90,167,90,33,0,151,0)
 
-    PositionsDict = {'Neutral':Neutral, 'LoadingA': LoadingA,
-    'LoadingB':LoadingB,'LoadingC':LoadingC,'LoadingD':LoadingD}
+    PositionsDict = {'Neutral':Neutral, 'LoadA': LoadA,
+    'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,'UnloadA':UnloadA,
+    'UnloadB':UnloadB}
 
 
 def Setup():
@@ -54,10 +56,10 @@ def SetPosition(pos):
 
 def LoadSubstrateHolder():
     global PositionsDict
-    SetPosition(PositionsDict['LoadingA'])
-    SetPosition(PositionsDict['LoadingB'])
-    SetPosition(PositionsDict['LoadingC'])
-    SetPosition(PositionsDict['LoadingD'])
+    SetPosition(PositionsDict['LoadA'])
+    SetPosition(PositionsDict['LoadB'])
+    SetPosition(PositionsDict['LoadC'])
+    SetPosition(PositionsDict['LoadD'])
     SetPosition(PositionsDict['Neutral'])
 
 ActionsDict = {'Load':LoadSubstrateHolder,}
