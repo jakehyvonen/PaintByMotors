@@ -26,7 +26,7 @@ def PopulatePositionsDict():
     Neutral = SystemPosition(90,90,90,90,0,0,151,0)
     LoadA = SystemPosition(9,111,0,90,47,0,151,0)
     LoadB = SystemPosition(9,111,0,90,47,0,7,0)
-    LoadC = SystemPosition(9,87,0,90,47,0,7,0)
+    LoadC = SystemPosition(9,87,0,90,47,0,1,0)
     LoadD = SystemPosition(9,87,0,90,47,0,151,0)
     UnloadA = SystemPosition(171,77,180,90,39,0,151,0)
     UnloadB = SystemPosition(171,77,180,90,39,0,340,0)
