@@ -24,16 +24,17 @@ class SystemPosition:
 def PopulatePositionsDict():
     global PositionsDict
     Neutral = SystemPosition(90,90,90,90,0,0,151,0)
-    LoadA = SystemPosition(11,111,0,90,47,0,151,0)
-    LoadB = SystemPosition(11,111,0,90,47,0,7,0)
-    LoadC = SystemPosition(11,88,0,90,47,0,7,0)
-    LoadD = SystemPosition(11,88,0,90,47,0,151,0)
-    UnloadA = SystemPosition(171,90,167,90,33,0,151,0)
-    UnloadB = SystemPosition(171,90,167,90,33,0,151,0)
+    LoadA = SystemPosition(9,111,0,90,47,0,151,0)
+    LoadB = SystemPosition(9,111,0,90,47,0,7,0)
+    LoadC = SystemPosition(9,87,0,90,47,0,7,0)
+    LoadD = SystemPosition(9,87,0,90,47,0,151,0)
+    UnloadA = SystemPosition(171,77,180,90,39,0,151,0)
+    UnloadB = SystemPosition(171,77,180,90,39,0,340,0)
+    UnloadC = SystemPosition(171,77,180,90,39,0,340,-322)
 
     PositionsDict = {'Neutral':Neutral, 'LoadA': LoadA,
     'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,'UnloadA':UnloadA,
-    'UnloadB':UnloadB}
+    'UnloadB':UnloadB,'UnloadC':UnloadC}
 
 
 def Setup():
@@ -62,7 +63,16 @@ def LoadSubstrateHolder():
     SetPosition(PositionsDict['LoadD'])
     SetPosition(PositionsDict['Neutral'])
 
-ActionsDict = {'Load':LoadSubstrateHolder,}
+def UnloadSubstrateHolder():
+    global PositionsDict
+    SetPosition(PositionsDict['UnloadA'])
+    SetPosition(PositionsDict['UnloadB'])
+    SetPosition(PositionsDict['UnloadC'])
+    SetPosition(PositionsDict['UnloadB'])
+    SetPosition(PositionsDict['UnloadA'])
+    SetPosition(PositionsDict['Neutral'])
+
+ActionsDict = {'Load':LoadSubstrateHolder,'Unload':UnloadSubstrateHolder}
 
 if __name__ == '__main__':    
     Setup()
