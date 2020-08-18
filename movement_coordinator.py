@@ -4,7 +4,6 @@ import serial_connection as s_c
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
--calibrate positions for load and unload substrate holders
  """
 PositionsDict = {}
 cnc_ma = c_m.CNCManager()
@@ -21,9 +20,11 @@ class SystemPosition:
         self.Z = Z
         self.E = E
 
+current_pos = SystemPosition()
+
 def PopulatePositionsDict():
     global PositionsDict
-    Neutral = SystemPosition(90,90,90,90,0,0,151,0)
+    Neutral = SystemPosition(11,111,90,90,0,0,151,0)
     LoadA = SystemPosition(9,111,0,90,47,0,151,0)
     LoadB = SystemPosition(9,111,0,90,47,0,7,0)
     LoadC = SystemPosition(9,87,0,90,47,0,1,0)
@@ -51,7 +52,7 @@ def Setup():
     PopulatePositionsDict()
 
 def SetPosition(pos):
-    global cnc_ma, ra_ma
+    global cnc_ma, ra_ma, 
     ra_ma.SetPosition('set',pos)
     cnc_ma.SetPosition(pos)
 
@@ -72,7 +73,12 @@ def UnloadSubstrateHolder():
     SetPosition(PositionsDict['UnloadA'])
     SetPosition(PositionsDict['Neutral'])
 
-ActionsDict = {'Load':LoadSubstrateHolder,'Unload':UnloadSubstrateHolder}
+def SwapNewSubstrate():
+    UnloadSubstrateHolder()
+    LoadSubstrateHolder()
+
+ActionsDict = {'Load':LoadSubstrateHolder,
+'Unload':UnloadSubstrateHolder,'Swap':SwapNewSubstrate}
 
 if __name__ == '__main__':    
     Setup()
