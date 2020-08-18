@@ -24,7 +24,7 @@ current_pos = SystemPosition()
 
 def PopulatePositionsDict():
     global PositionsDict
-    Neutral = SystemPosition(11,111,90,90,0,0,151,0)
+    Neutral = SystemPosition(11,111,1,90,0,0,151,0)
     LoadA = SystemPosition(9,111,0,90,47,0,151,0)
     LoadB = SystemPosition(9,111,0,90,47,0,7,0)
     LoadC = SystemPosition(9,87,0,90,47,0,1,0)
@@ -52,7 +52,7 @@ def Setup():
     PopulatePositionsDict()
 
 def SetPosition(pos):
-    global cnc_ma, ra_ma, 
+    global cnc_ma, ra_ma
     ra_ma.SetPosition('set',pos)
     cnc_ma.SetPosition(pos)
 

@@ -67,11 +67,11 @@ class CNCManager:
 if __name__ == '__main__':
     manager = CNCManager()
     manager.connect_to_controller(sc.serial_ports())
-    manager.SendCommand('M302 P1')
+    #manager.SendCommand('M302 P1')
     while True:
         var = input("Please enter a command: ")
         print("entered: "+str(var))
-        manager.SendCommand(str(var))
+        manager.SendCommand(str(var), False)
     """ #setup communication with Arduino Mega CNC controllers
     ser = serial.Serial(
         
