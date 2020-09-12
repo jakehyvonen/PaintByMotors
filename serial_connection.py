@@ -31,7 +31,7 @@ def serial_ports():
     return result
 
 def ping_controller(ports, baud=9600, 
-qrymsg=b'ping', retmsg='pong', trycount = 1):
+qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
     print('pinging serial with qrymsg: ' + qrymsg.decode())
     for port in ports:
         print('testing port: ' + port)
@@ -44,10 +44,18 @@ qrymsg=b'ping', retmsg='pong', trycount = 1):
                 try:
                     i += 1
                     s.write(qrymsg)
-                    ret = s.readline()
-                    ret = ret.decode().rstrip()
+                    ret = ''
+                    if(readsequence == '\n'):
+                        ret = s.readline()
+                        ret = ret.decode().rstrip()
+                    elif(readsequence == b'\x03'):
+                        ret = s.read_until(readsequence)
+                        #strip first and last bytes to accomamodate New Era syntax
+                        ret = ret.decode()[1:-1]
+                    else:
+                        print('unrecognized readsequence')
                     print('ret: ' + ret)
-                    #print('retmsg: ' + retmsg)
+                    print('retmsg: ' + retmsg)
                     if ret == retmsg:
                         print('successfully connected to: '+s.name)
                         #s.close()
@@ -68,7 +76,7 @@ def DebugPumps():
         port ="/dev/ttyUSB1",
         baudrate=19200,
         )
-    command = b'00DIA' + b'\r'
+    command = b'VOL' + b'\r'
     ser.write(command)
     receivedmsg = False
     trycount = 0
@@ -78,7 +86,24 @@ def DebugPumps():
         if(ser.in_waiting > 0):
             response = ser.read_until(b'\x03')
             print(response)
-            print('response: ' + str(response.decode()))
+            response = response.decode()[1:-1]#need to strip STX and ETX bytes (FUCKING HELL!!!!!!!)
+            print('response: ' + response)
+            retmsg = '00S0.000ML'
+            print('retmsg: ' + retmsg)
+
+            if(response == retmsg):
+                print('yay i am sane')
+            else:
+                print('wat the fuckkkk')
+                print('response type: '+str(type(response)))
+                print('response len(): '+str(len(response)))
+                for s in response:
+                    print('s: ' + s)
+
+                print('retmsg type: '+str(type(retmsg)))
+                print('retmsg len(): '+str(len(retmsg)))
+                for i in retmsg:
+                    print('i: ' + i)
             receivedmsg = True
         else:
             ser.write(command)
@@ -118,4 +143,4 @@ def DebugMarlin():
 
 
 if __name__ == '__main__':
-    DebugRoboArm()
+    DebugPumps()

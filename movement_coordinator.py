@@ -4,6 +4,7 @@ import serial_connection as s_c
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
+-abstract base class for serial_device_managers
  """
 PositionsDict = {}
 cnc_ma = c_m.CNCManager()
