@@ -1,9 +1,11 @@
 from pyPS4Controller.controller import Controller
 import movement_coordinator as mc
+import cnc_manager as cm
 import time
 #https://github.com/ArturSpirin/pyPS4Controllerhttps://github.com/ArturSpirin/pyPS4Controller
 
-zpos = 151
+zpos = 0
+manager = cm.CNCManager()
 
 class MyController(Controller):
 
@@ -11,11 +13,11 @@ class MyController(Controller):
         Controller.__init__(self, **kwargs)
     
     def on_x_press(self):
-        global zpos
+        global zpos, manager
         zpos+=0.1
         command = 'G1 Z'+str(zpos)
-        mc.cnc_ma.SendCommand(command)
+        manager.SendCommand(command)
 
-mc.Setup()
+manager.Setup()
 controller = MyController(interface="/dev/input/js0", connecting_using_ds4drv=False)
 controller.listen()

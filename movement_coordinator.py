@@ -24,7 +24,8 @@ current_pos = SystemPosition()
 
 def PopulatePositionsDict():
     global PositionsDict
-    Neutral = SystemPosition(11,111,1,90,0,0,151,0)
+    NeutralA = SystemPosition(131,180,33,90,0,0,151,0)
+    NeutralB = SystemPosition(11,111,1,90,0,0,151,0)
     LoadA = SystemPosition(9,111,0,90,47,0,151,0)
     LoadB = SystemPosition(9,111,0,90,47,0,7,0)
     LoadC = SystemPosition(9,87,0,90,47,0,1,0)
@@ -33,7 +34,7 @@ def PopulatePositionsDict():
     UnloadB = SystemPosition(171,77,180,90,39,0,340,0)
     UnloadC = SystemPosition(171,77,180,90,39,0,340,-322)
 
-    PositionsDict = {'Neutral':Neutral, 'LoadA': LoadA,
+    PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 'LoadA': LoadA,
     'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,'UnloadA':UnloadA,
     'UnloadB':UnloadB,'UnloadC':UnloadC}
 
@@ -50,6 +51,9 @@ def Setup():
     print('removing port: ' + portToRemove)
     ports.remove(portToRemove)
     PopulatePositionsDict()
+    SetPosition(PositionsDict['NeutralB'])
+    SetPosition(PositionsDict['NeutralA'])
+
 
 def SetPosition(pos):
     global cnc_ma, ra_ma
@@ -62,7 +66,9 @@ def LoadSubstrateHolder():
     SetPosition(PositionsDict['LoadB'])
     SetPosition(PositionsDict['LoadC'])
     SetPosition(PositionsDict['LoadD'])
-    SetPosition(PositionsDict['Neutral'])
+    SetPosition(PositionsDict['NeutralB'])
+    SetPosition(PositionsDict['NeutralA'])
+
 
 def UnloadSubstrateHolder():
     global PositionsDict
@@ -71,7 +77,9 @@ def UnloadSubstrateHolder():
     SetPosition(PositionsDict['UnloadC'])
     SetPosition(PositionsDict['UnloadB'])
     SetPosition(PositionsDict['UnloadA'])
-    SetPosition(PositionsDict['Neutral'])
+    SetPosition(PositionsDict['NeutralA'])
+    SetPosition(PositionsDict['NeutralB'])
+
 
 def SwapNewSubstrate():
     UnloadSubstrateHolder()

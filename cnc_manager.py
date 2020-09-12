@@ -11,7 +11,7 @@ class CNCManager:
     def __init__(self):
         self.connection_status_label = 'not connected'        
     
-    def connect_to_controller(self,ports):
+    def connect_to_controller(self,ports=sc.serial_ports()):
         global ser
         if ser.is_open:
             print('already connected')
@@ -47,18 +47,15 @@ class CNCManager:
                 self.WaitForResponse()
         else:
             print('serial not open')
-
-    def SetupMarlin(self):
-        #set max feedrate to 11 (default is 5)
-        self.SendCommand('M203 Z11')
-        #enable cold extrusion (allow usage of E axis)
-        self.SendCommand('M302 P1')
-        
+    
     def SetInitialState(self):
         self.WaitForResponse('SD card')
-        self.SendCommand('G28 X0 Z0')
-        self.SetupMarlin()
-        self.SendCommand('G1 Z151')
+        self.SendCommand('G28 X0 Y0 Z0')
+        #self.SendCommand('G1 Z151')
+    
+    def Setup(self):
+        self.connect_to_controller()
+        self.SetInitialState()
     
     def SetPosition(self,pos):
         com = 'G1 X'+str(pos.X)+' Y'+str(pos.Y)+' Z'+str(pos.Z)+' E'+str(pos.E)
