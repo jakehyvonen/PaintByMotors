@@ -1,12 +1,16 @@
 import serial
 import serial_connection as sc
+import enum
 
 ser = serial.Serial()
 ser.port = None
 ser.baudrate = 19200
 ser.timeout = 1
 ser.write_timeout = 1
-
+'''
+Note: if pump addresses are somehow reset, this will fuck up
+--> addresses need to be set individually via serial_connection.py 
+'''
 class SyringePumpManager:
     def __init__(self):
             self.connection_status_label = 'not connected'        
@@ -17,7 +21,7 @@ class SyringePumpManager:
             print('already connected')
         else:
             print('attempting to connect...')
-            s = sc.ping_controller(ports, 19200, b'VOL\r','00S0.000ML',11,b'\x03')        
+            s = sc.ping_controller(ports, 19200, b'00DIA\r','00S26.59',11,b'\x03')        
             if s == -1:
                 return -1
             else:
@@ -42,6 +46,19 @@ class SyringePumpManager:
             except:
                 print('oh heavens, there is a connection problem')
                 pass
+
+class RateUnits (enum.Enum):
+    UM = 1 #uL/min
+    MM = 2 #mL/Min
+    UH = 3 #uL/hr
+    MH = 4 #mL/hr
+
+class SyringePump:
+    def __init__(self, address = 00, volume = 60.0, rate = 11.0, units = RateUnits.MM):
+            self.address = address
+            self.volume = volume
+            self.rate = rate
+            self.units = units
 
 if __name__ == '__main__':
     manager = SyringePumpManager()

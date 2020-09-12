@@ -88,7 +88,7 @@ def DebugPumps():
             print(response)
             response = response.decode()[1:-1]#need to strip STX and ETX bytes (FUCKING HELL!!!!!!!)
             print('response: ' + response)
-            retmsg = '00S0.000ML'
+            retmsg = '00S60.00ML'
             print('retmsg: ' + retmsg)
 
             if(response == retmsg):
