@@ -25,33 +25,34 @@ current_pos = SystemPosition()
 
 def PopulatePositionsDict():
     global PositionsDict
-    NeutralA = SystemPosition(131,180,33,90,0,0,151,0)
-    NeutralB = SystemPosition(11,111,1,90,0,0,151,0)
-    LoadA = SystemPosition(9,111,0,90,47,0,151,0)
-    LoadB = SystemPosition(9,111,0,90,47,0,7,0)
-    LoadC = SystemPosition(9,87,0,90,47,0,1,0)
-    LoadD = SystemPosition(9,87,0,90,47,0,151,0)
+    NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
+    NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
+    LoadA = SystemPosition(11,111,0,90,47,0,151,0)
+    LoadB = SystemPosition(11,111,0,90,47,0,7,0)
+    LoadC = SystemPosition(11,87,0,90,47,0,1,0)
+    LoadD = SystemPosition(11,87,0,90,47,0,151,0)
     UnloadA = SystemPosition(171,77,180,90,39,0,151,0)
     UnloadB = SystemPosition(171,77,180,90,39,0,340,0)
     UnloadC = SystemPosition(171,77,180,90,39,0,340,-322)
-
     PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 'LoadA': LoadA,
     'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,'UnloadA':UnloadA,
     'UnloadB':UnloadB,'UnloadC':UnloadC}
+    print('PopulatePositionsDict() done')
 
 
 def Setup():
     global cnc_ma, ra_ma
+    PopulatePositionsDict()
     ports = s_c.serial_ports()    
     #don't test ports again once they're known
     portToRemove = cnc_ma.connect_to_controller(ports)
     print('removing port: ' + portToRemove)
     ports.remove(portToRemove)
     cnc_ma.SetInitialState()
+    cnc_ma.SetPosition(PositionsDict['NeutralB'])
     portToRemove = ra_ma.connect_to_controller(ports)
     print('removing port: ' + portToRemove)
     ports.remove(portToRemove)
-    PopulatePositionsDict()
     SetPosition(PositionsDict['NeutralB'])
     SetPosition(PositionsDict['NeutralA'])
 
