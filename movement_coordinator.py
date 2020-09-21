@@ -1,6 +1,7 @@
 import roboarm_manager as r_m
 import cnc_manager as c_m
 import serial_connection as s_c
+import time
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
@@ -27,13 +28,13 @@ def PopulatePositionsDict():
     global PositionsDict
     NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
     NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
-    LoadA = SystemPosition(11,111,0,90,47,0,151,0)
-    LoadB = SystemPosition(11,111,0,90,47,0,7,0)
-    LoadC = SystemPosition(11,87,0,90,47,0,1,0)
-    LoadD = SystemPosition(11,87,0,90,47,0,151,0)
-    UnloadA = SystemPosition(171,77,180,90,39,0,151,0)
-    UnloadB = SystemPosition(171,77,180,90,39,0,340,0)
-    UnloadC = SystemPosition(171,77,180,90,39,0,340,-322)
+    LoadA = SystemPosition(11,111,0,90,48,0,151,0)
+    LoadB = SystemPosition(11,111,0,90,48,0,7,0)
+    LoadC = SystemPosition(11,87,0,90,48,0,1,0)
+    LoadD = SystemPosition(11,87,0,90,48,0,151,0)
+    UnloadA = SystemPosition(171,71,180,90,39,0,151,0)
+    UnloadB = SystemPosition(171,71,180,90,39,0,342,0)
+    UnloadC = SystemPosition(171,71,180,90,39,0,342,-322)
     PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 'LoadA': LoadA,
     'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,'UnloadA':UnloadA,
     'UnloadB':UnloadB,'UnloadC':UnloadC}
@@ -53,7 +54,9 @@ def Setup():
     portToRemove = ra_ma.connect_to_controller(ports)
     print('removing port: ' + portToRemove)
     ports.remove(portToRemove)
+    time.sleep(1.1)
     SetPosition(PositionsDict['NeutralB'])
+    time.sleep(1.1)
     SetPosition(PositionsDict['NeutralA'])
 
 
