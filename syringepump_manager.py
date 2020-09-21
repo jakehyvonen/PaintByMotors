@@ -8,7 +8,7 @@ ser.baudrate = 19200
 ser.timeout = 1
 ser.write_timeout = 1
 '''
-Note: if pump addresses are somehow reset, this will fuck up
+Note: if pump addresses are somehow reset, this won't work properly
 --> addresses would need to be re-set individually via serial_connection.py 
 '''
 class SyringePumpManager:
@@ -56,9 +56,7 @@ class SyringePumpManager:
                 ser.open()
             except:
                 print('oh heavens, there is a connection problem')
-                pass
-
-    
+                pass    
 
     def UpdateVolPercent(self, pump):
         print('UpdateVolPercent()')
