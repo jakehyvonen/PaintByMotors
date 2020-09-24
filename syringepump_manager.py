@@ -7,6 +7,9 @@ ser.port = None
 ser.baudrate = 19200
 ser.timeout = 1
 ser.write_timeout = 1
+dia60mLsyringe = 'S26.59'
+diaquerybytes = b'00DIA\r'
+ETXbyte = b'\x03'
 '''
 Note: if pump addresses are somehow reset, this won't work properly
 --> addresses would need to be re-set individually via serial_connection.py 
@@ -31,7 +34,7 @@ class SyringePumpManager:
             print('already connected')
         else:
             print('attempting to connect...')
-            s = sc.ping_controller(ports, 19200, b'00DIA\r','00S26.59',11,b'\x03')        
+            s = sc.ping_controller(ports, 19200, diaquerybytes,'00'+dia60mLsyringe,11,ETXbyte)        
             if s == -1:
                 return -1
             else:
@@ -39,7 +42,7 @@ class SyringePumpManager:
                 ser.open()               
                 return s
 
-    def RawCommand(self, com, getResponse = True):     
+    def RawCommand(self, com, getResponse = True, tryCount = 1):     
         if ser.is_open:
             print('RawCommand(): ' + com)            
             if('echo' in com or 'get' in com):
@@ -47,8 +50,9 @@ class SyringePumpManager:
             command = str(com)+"\r"
             ser.write(command.encode())
             if getResponse:
-                response = ser.read_until(b'\x03').decode().rstrip()
-                print('response: ' + response)
+                #strip first and last bytes to accomamodate New Era syntax
+                response = ser.read_until(ETXbyte).decode().rstrip()[1:-1]
+                print('response: ' + response)              
                 return response
         else:
             print('Serial closed. Attempting to open')
@@ -67,7 +71,7 @@ class SyringePumpManager:
         dis = self.RawCommand(command)
     
     def StartPumping(self, pump):
-        print('StartPumping(): ' + str(pump))
+        print('StartPumping(): ' + str(pump.name))
     
     def StopPumping(self, pump):
         print('StopPumping()' + str(pump))    
@@ -88,10 +92,26 @@ class SyringePumpManager:
         if pn not in self.PumpNames:
             manager.RawCommand(str(com),True)
 
+    def PumpIsTalking(self,pump):
+        print('PumpIsTalking()')
+        ret = self.RawCommand(pump.address+'DIA')       
+        if ret == pump.address + dia60mLsyringe:
+            return True
+        else:
+            return False
+
+
     def Setup(self):
-            print('PopulateDicts() SyringePumpManager')
-            
-            self.connect_to_controller(sc.serial_ports())
+        print('PopulateDicts() SyringePumpManager')            
+        self.connect_to_controller(sc.serial_ports())
+        for p in self.Pumps:
+            if not self.PumpIsTalking(p):
+                print('pump with communication issues: ' +p.name)
+                if not self.PumpIsTalking(p):
+                    print('that are persistent')
+                else:
+                    print('that were resolved')
+
 
 class RateUnits (enum.Enum):
     UM = 1 #uL/min
@@ -101,13 +121,15 @@ class RateUnits (enum.Enum):
 
 class SyringePump:
     def __init__(self, address = '00', maxVol = 60.0, 
-    volPercent = 0.0, rate = 11.0, units = RateUnits.MM):
+    volPercent = 0.0, volDispensed = 0.0, rate = 11.0, units = RateUnits.MM):
             self.address = address
             self.name = 'pump' + address
             self.maxVol = maxVol
             self.volPercent = volPercent
+            self.volDispensed = volDispensed
             self.rate = rate
             self.units = units
+            self.active = False
 
 if __name__ == '__main__':
     manager = SyringePumpManager()
