@@ -3,12 +3,12 @@
 
 #define MSG_METHOD_SUCCESS 0
 #define MSG_METHOD_FAIL 1
-Servo base;
-Servo shoulder;
-Servo elbow;
-Servo wrist_rot;
-Servo wrist_ver;
-Servo gripper;
+Servo base;//M1
+Servo shoulder;//M2
+Servo elbow;//M3
+Servo wrist_rot;//M4
+Servo wrist_ver;//M5
+Servo gripper;//M6
 int del=11, M1=90, M2=11, M3=111, M4=1, M5=90, M6=73;
 void setup() {  
   //Initialization functions and set up the initial position for Braccio
@@ -21,8 +21,8 @@ void setup() {
   //gripper (M6): 10 degrees
   Serial.begin(9600);
   //Serial.println("not sure if I'm sane");
-  Braccio.begin();
-  Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+  Braccio.begin();//-999 == Braccio.SOFT_START_DISABLED
+  //Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
 }
 
 void loop() {
@@ -71,6 +71,23 @@ void loop() {
       parseString = command.substring(12,15);
       M5 = parseString.toInt();
       //Serial.print(" M5: " + String(M5));
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+    }
+    else if(command.substring(0,4)=="open")
+    {
+      //String parseString = command.substring(4,7);
+      //M1 = parseString.toInt();
+      M1 = 77;
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
+    }
+    else if(command.substring(0,5)=="rinse")
+    {
+      M1 = 160;
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+    }
+    else if(command.substring(0,5)=="close")
+    {
+      M1 = 163;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
     }
     else
