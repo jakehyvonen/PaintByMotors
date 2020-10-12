@@ -102,8 +102,7 @@ class Movement_Coordinator:
 
 if __name__ == '__main__':  
     mc = Movement_Coordinator()  
-    #mc.SetupSerialIO()
-   
+    mc.SetupSerialIO()
     while True:
         var = input('Please enter a command: ')
         print('Entered: ' + var)
