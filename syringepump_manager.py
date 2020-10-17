@@ -98,14 +98,16 @@ class SyringePumpManager:
 
     def PumpIsTalking(self,pump):
         print('PumpIsTalking()')
-        ret = self.RawCommand(pump.address+'DIA')       
-        if ret == pump.address + dia60mLsyringe:
+        ret = self.RawCommand(pump.address+'DIA')  
+        #ignore status byte
+        ret = ret[:2] + ret[3:]     
+        if ret == pump.address + dia60mLsyringe[1:]:
             return True
         else:
             return False
 
 
-    def Setup(self,ports):
+    def Setup(self,ports=sc.serial_ports()):
         print('Setup() SyringePumpManager')            
         self.connect_to_controller(ports)
         for p in self.Pumps:

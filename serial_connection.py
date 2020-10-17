@@ -62,6 +62,12 @@ def ping_single_port(port, baud, qrymsg, retmsg, trycount, readsequence):
                     ret = s.read_until(readsequence)
                     #strip first and last bytes to accomamodate New Era syntax
                     ret = ret.decode()[1:-1]
+                    #silly workaround to ignore the status byte
+                    print('ret: ' + ret)
+                    print('retmsg[2]: ' + retmsg[2])
+                    print('ret[2]: ' + ret[2])
+                    ret = ret[:2] + retmsg[2] + ret[3:]
+                    print('new ret: ' + ret)
                 else:
                     print('unrecognized readsequence')
                 print('ret: ' + ret)
@@ -70,7 +76,8 @@ def ping_single_port(port, baud, qrymsg, retmsg, trycount, readsequence):
                     print('successfully connected to: '+s.name)
                     #s.close()
                     return True
-            except:
+            except Exception as e:
+                print(e)
                 pass
         else:
             s.close()

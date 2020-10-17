@@ -7,7 +7,6 @@ import time
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
 -abstract base class for serial_device_managers
--use default ports to save time
  """
 class SystemPosition:
     def __init__(self, M2=90, M3=90, M4=90, M5=90, X=0, Y=0, Z=0, E=0):
@@ -33,9 +32,10 @@ UnloadC = SystemPosition(171,71,180,90,39,0,342,-322)
 
 class Movement_Coordinator:    
     def SetupSerialIO(self, *argv):
-        #global cnc_ma, ra_ma
-        #self.PopulatePositionsDict()
         ports = s_c.serial_ports()    
+        #default to initializing all devices
+        if(len(argv) == 0):
+            argv = ['cnc','ra','syr']
         if('cnc' in argv):
             #don't test ports again once they're known
             portToRemove = self.cnc_ma.connect_to_controller(ports)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     mc.SetupSerialIO(
     #    'cnc',
     #'ra',
-    'syr'
+    #'syr'
     )
     while True:
         var = input('Please enter a command: ')
