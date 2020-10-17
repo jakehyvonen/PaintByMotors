@@ -30,44 +30,49 @@ def serial_ports():
             pass
     return result
 
-def ping_controller(ports, baud=9600, 
+def ping_controller(ports, defaultPort, baud=9600, 
 qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
     print('pinging serial with qrymsg: ' + qrymsg.decode())
     for port in ports:
-        print('testing port: ' + port)
-        try:
-            s = serial.Serial(port,baud,timeout=1,write_timeout=1)
-            time.sleep(1)
-            s.flush()
-            i = 0
-            while i <= trycount:
-                try:
-                    i += 1
-                    s.write(qrymsg)
-                    ret = ''
-                    if(readsequence == '\n'):
-                        ret = s.readline()
-                        ret = ret.decode().rstrip()
-                    elif(readsequence == b'\x03'):
-                        ret = s.read_until(readsequence)
-                        #strip first and last bytes to accomamodate New Era syntax
-                        ret = ret.decode()[1:-1]
-                    else:
-                        print('unrecognized readsequence')
-                    print('ret: ' + ret)
-                    print('retmsg: ' + retmsg)
-                    if ret == retmsg:
-                        print('successfully connected to: '+s.name)
-                        #s.close()
-                        return port
-                except:
-                    pass
-            else:
-                s.close()
+        if(ping_single_port)
         except (OSError, serial.SerialException):
             pass
     print('no response to ping')
     return -1
+
+def ping_single_port(port, baud, qrymsg, retmsg, trycount, readsequence):
+    print('testing port: ' + port)
+    try:
+        s = serial.Serial(port,baud,timeout=1,write_timeout=1)
+        time.sleep(1)
+        s.flush()
+        i = 0
+        while i <= trycount:
+            try:
+                i += 1
+                s.write(qrymsg)
+                ret = ''
+                if(readsequence == '\n'):
+                    ret = s.readline()
+                    ret = ret.decode().rstrip()
+                elif(readsequence == b'\x03'):
+                    ret = s.read_until(readsequence)
+                    #strip first and last bytes to accomamodate New Era syntax
+                    ret = ret.decode()[1:-1]
+                else:
+                    print('unrecognized readsequence')
+                print('ret: ' + ret)
+                print('retmsg: ' + retmsg)
+                if ret == retmsg:
+                    print('successfully connected to: '+s.name)
+                    #s.close()
+                    return True
+            except:
+                pass
+        else:
+            s.close()
+            return False
+
 
 def DebugPumps():
     print(serial_ports())

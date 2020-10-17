@@ -6,6 +6,7 @@ import time
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
 -abstract base class for serial_device_managers
+-use default ports to save time
  """
 class SystemPosition:
     def __init__(self, M2=90, M3=90, M4=90, M5=90, X=0, Y=0, Z=0, E=0):
@@ -69,15 +70,18 @@ class Movement_Coordinator:
         self.SetPosition(newpos)
 
     def LoadSubstrateHolder(self):
+        self.isBusy = True
         self.SetPosition(self.PositionsDict['LoadA'])
         self.SetPosition(self.PositionsDict['LoadB'])
         self.SetPosition(self.PositionsDict['LoadC'])
         self.SetPosition(self.PositionsDict['LoadD'])
         self.SetPosition(self.PositionsDict['NeutralB'])
         self.SetPosition(self.PositionsDict['NeutralA'])
+        self.isBusy = False
 
 
     def UnloadSubstrateHolder(self):
+        self.isBusy = True
         self.SetPosition(self.PositionsDict['UnloadA'])
         self.SetPosition(self.PositionsDict['UnloadB'])
         self.SetPosition(self.PositionsDict['UnloadC'])
@@ -85,12 +89,25 @@ class Movement_Coordinator:
         self.SetPosition(self.PositionsDict['UnloadA'])
         self.SetPosition(self.PositionsDict['NeutralA'])
         self.SetPosition(self.PositionsDict['NeutralB'])
+        self.isBusy = False
+
 
     def SwapNewSubstrate(self):
         self.UnloadSubstrateHolder()
         self.LoadSubstrateHolder()
 
+    def HandleCommand(self, var):
+        if('echo' in var or 'get' in var or 'set' in var):
+            self.ra_ma.SendCommand(var)
+        elif(var in self.PositionsDict.keys()):
+            self.SetPosition(self.PositionsDict[var])
+        elif(var in self.ActionsDict.keys()):
+            self.ActionsDict[var]()
+        else:
+            self.cnc_ma.SendCommand(var)
+
     def __init__(self):
+        self.isBusy = False
         self.current_pos = SystemPosition()
         self.cnc_ma = c_m.CNCManager()
         self.ra_ma = r_m.RoboArmManager()
@@ -106,6 +123,9 @@ if __name__ == '__main__':
     while True:
         var = input('Please enter a command: ')
         print('Entered: ' + var)
+        mc.HandleCommand(var)
+
+        """
         if('echo' in var or 'get' in var or 'set' in var):
             mc.ra_ma.SendCommand(var)
         elif(var in mc.PositionsDict.keys()):
@@ -115,7 +135,7 @@ if __name__ == '__main__':
         else:
             mc.cnc_ma.SendCommand(var)
 
-        """ var = input("Enter c for cnc, r for roboarm command, q to quit: ")
+        var = input("Enter c for cnc, r for roboarm command, q to quit: ")
         print("Entered: "+var)
         if(var == 'c'):
             com = input('Please enter CNC command: ')
