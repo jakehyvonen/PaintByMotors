@@ -7,15 +7,17 @@ import time
 #-
 
 if __name__ == '__main__':  
-    mc = mover.Movement_Coordinator()
-    mc.SetupSerialIO()
+    mc = mover.Movement_Coordinator('cnc','syr')
     xi = xbox.Xbox_Interface()
 
     while True:
-        print('current_pos X: ' + str(xi.get_pos().X))
-        print('current_pos Y: ' + str(xi.get_pos().Y))
+        x = xi.get_pos().X
+        y = xi.get_pos().Y
         if(not mc.isBusy):
-            mc.RelativePosition(xi.current_pos)
-        if(xi.get_msg() != ''):
+            if(abs(x) > 0.1 or abs(y) > 0.1):
+                print('current_pos X: ' + str(x))
+                print('current_pos Y: ' + str(y))
+                mc.RelativePosition(xi.current_pos)
+        if(xi.get_msg()):
             mc.HandleCommand(xi.msg)
         #time.sleep(0.1)

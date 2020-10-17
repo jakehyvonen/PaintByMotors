@@ -7,7 +7,7 @@ from movement_coordinator import SystemPosition
 class Xbox_Interface:
     def __init__(self):
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
-        self.msg = ''
+        self.msg = None
         #self.HandleInput()
         th = threading.Thread(target=self.HandleInput)
         th.start()
@@ -45,15 +45,22 @@ class Xbox_Interface:
         except KeyboardInterrupt:
             pass
 
+    #button Y:pump0, B:pump1, A:pump2
     def on_button_pressed(self, button):
         print('Button {0} was pressed'.format(button.name))
         if(button.name == 'button_trigger_l'):
             self.msg = 'Swap'
+        elif(button.name == 'button_y'):
+            self.msg = 'Run,0'
+        elif(button.name == 'button_b'):
+            self.msg = 'Run,1'
+        elif(button.name == 'button_a'):
+            self.msg = 'Run,2'
 
 
     def on_button_released(self, button):
         print('Button {0} was released'.format(button.name))
-        self.msg = ''
+        self.msg = None
 
 
     def on_axis_moved(self, axis):
