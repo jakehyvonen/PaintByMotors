@@ -30,13 +30,16 @@ def serial_ports():
             pass
     return result
 
-def ping_controller(ports, defaultPort, baud=9600, 
-qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
+def ping_controller(defaultPort, ports=serial_ports(), baud=9600, qrymsg=b'ping',
+ retmsg='pong', trycount = 1, readsequence = '\n'):
     print('pinging serial with qrymsg: ' + qrymsg.decode())
-    for port in ports:
-        if(ping_single_port)
-        except (OSError, serial.SerialException):
-            pass
+    if(ping_single_port(defaultPort,baud,qrymsg,retmsg,trycount,readsequence)):
+        print('connected to default port')
+        return defaultPort
+    else:        
+        for port in ports:
+            if(ping_single_port(port,baud,qrymsg,retmsg,trycount,readsequence)):
+                return port    
     print('no response to ping')
     return -1
 
@@ -72,7 +75,8 @@ def ping_single_port(port, baud, qrymsg, retmsg, trycount, readsequence):
         else:
             s.close()
             return False
-
+    except (OSError, serial.SerialException):
+        pass
 
 def DebugPumps():
     print(serial_ports())

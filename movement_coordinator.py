@@ -1,5 +1,6 @@
 import roboarm_manager as r_m
 import cnc_manager as c_m
+import syringepump_manager as s_m
 import serial_connection as s_c
 import time
 
@@ -44,6 +45,7 @@ class Movement_Coordinator:
         portToRemove = self.ra_ma.connect_to_controller(ports)
         print('removing port: ' + portToRemove)
         ports.remove(portToRemove)
+        self.syr_ma.connect_to_controller(ports)
         time.sleep(1.1)
         self.SetPosition(self.PositionsDict['NeutralB'])
         time.sleep(1.1)
@@ -111,6 +113,7 @@ class Movement_Coordinator:
         self.current_pos = SystemPosition()
         self.cnc_ma = c_m.CNCManager()
         self.ra_ma = r_m.RoboArmManager()
+        self.syr_ma = s_m.SyringePumpManager()
         self.PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 
             'LoadA': LoadA, 'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,
             'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC}

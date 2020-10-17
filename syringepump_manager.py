@@ -28,13 +28,13 @@ class SyringePumpManager:
             self.Actions = {'volpercent':self.UpdateVolPercent,
             'start':self.StartPumping,'stop':self.StopPumping}      
 
-    def connect_to_controller(self, ports=sc.serial_ports()):
+    def connect_to_controller(self,ports = sc.serial_ports()):
         global ser
         if ser.is_open:
             print('already connected')
         else:
-            print('attempting to connect...')
-            s = sc.ping_controller(ports, 19200, diaquerybytes,'00'+dia60mLsyringe,11,ETXbyte)        
+            print('attempting to connect to SyringePumps...')
+            s = sc.ping_controller('/dev/ttyUSB1', ports, 19200, diaquerybytes,'00'+dia60mLsyringe,11,ETXbyte)        
             if s == -1:
                 return -1
             else:
@@ -102,15 +102,15 @@ class SyringePumpManager:
 
 
     def Setup(self):
-        print('PopulateDicts() SyringePumpManager')            
-        self.connect_to_controller(sc.serial_ports())
+        print('Setup() SyringePumpManager')            
+        self.connect_to_controller()
         for p in self.Pumps:
             if not self.PumpIsTalking(p):
                 print('pump with communication issues: ' +p.name)
                 if not self.PumpIsTalking(p):
-                    print('that are persistent')
+                    print('issues are persistent')
                 else:
-                    print('that were resolved')
+                    print('issues were resolved')
 
 
 class RateUnits (enum.Enum):

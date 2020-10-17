@@ -16,13 +16,13 @@ class RoboArmManager:
     def __init__(self):
         self.connection_status_label = 'not connected'        
     
-    def connect_to_controller(self, ports):
+    def connect_to_controller(self, ports = sc.serial_ports()):
         global ser
         if ser.is_open:
             print('already connected')
         else:
-            print('attempting to connect...')
-            s = sc.ping_controller(ports, 9600, b'ping','pong',11)        
+            print('attempting to connect to RoboArm...')
+            s = sc.ping_controller('/dev/ttyACM0', ports, 9600, b'ping','pong',11)        
             if s == -1:
                 return -1
             else:
@@ -87,7 +87,7 @@ class RoboArmManager:
 
 if __name__ == '__main__':
     manager = RoboArmManager()
-    manager.connect_to_controller(sc.serial_ports())
+    manager.connect_to_controller()
     while True:
         var = input("Please enter a command: ")
         print("entered: "+str(var))

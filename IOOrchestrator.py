@@ -1,5 +1,4 @@
 import movement_coordinator as mover 
-import syringepump_manager as sm 
 import XboxController_interface as xbox 
 import time
 

@@ -11,13 +11,13 @@ class CNCManager:
     def __init__(self):
         self.connection_status_label = 'not connected'        
     
-    def connect_to_controller(self,ports=sc.serial_ports()):
+    def connect_to_controller(self,ports = sc.serial_ports()):
         global ser
         if ser.is_open:
             print('already connected')
         else:
-            print('attempting to connect...')
-            s = sc.ping_controller(ports, 115200, b'ping','echo:start')        
+            print('attempting to connect to MarlinCNC...')
+            s = sc.ping_controller('/dev/ttyUSB0', ports, 115200, b'ping','echo:start')        
             if s == -1:
                 return -1
             else:
@@ -63,8 +63,8 @@ class CNCManager:
 
 if __name__ == '__main__':
     manager = CNCManager()
-    manager.connect_to_controller(sc.serial_ports())
-    #manager.SendCommand('M302 P1')
+    manager.connect_to_controller()
+    #manager.Setup()
     while True:
         var = input("Please enter a command: ")
         print("entered: "+str(var))
