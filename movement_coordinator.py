@@ -32,24 +32,28 @@ UnloadC = SystemPosition(171,71,180,90,39,0,342,-322)
 
 
 class Movement_Coordinator:    
-    def SetupSerialIO(self):
+    def SetupSerialIO(self, *argv):
         #global cnc_ma, ra_ma
         #self.PopulatePositionsDict()
         ports = s_c.serial_ports()    
-        #don't test ports again once they're known
-        portToRemove = self.cnc_ma.connect_to_controller(ports)
-        print('removing port: ' + portToRemove)
-        ports.remove(portToRemove)
-        self.cnc_ma.SetInitialState()
-        self.cnc_ma.SetPosition(self.PositionsDict['NeutralB'])
-        portToRemove = self.ra_ma.connect_to_controller(ports)
-        print('removing port: ' + portToRemove)
-        ports.remove(portToRemove)
-        self.syr_ma.connect_to_controller(ports)
-        time.sleep(1.1)
-        self.SetPosition(self.PositionsDict['NeutralB'])
-        time.sleep(1.1)
-        self.SetPosition(self.PositionsDict['NeutralA'])
+        if('cnc' in argv):
+            #don't test ports again once they're known
+            portToRemove = self.cnc_ma.connect_to_controller(ports)
+            print('removing port: ' + portToRemove)
+            ports.remove(portToRemove)
+            self.cnc_ma.SetInitialState()
+            self.cnc_ma.SetPosition(self.PositionsDict['NeutralB'])
+        if('ra' in argv):
+            portToRemove = self.ra_ma.connect_to_controller(ports)
+            print('removing port: ' + portToRemove)
+            ports.remove(portToRemove)
+        if('syr' in argv):
+            self.syr_ma.Setup(ports)
+        if('cnc' in argv):
+            time.sleep(1.1)
+            self.SetPosition(self.PositionsDict['NeutralB'])
+            time.sleep(1.1)
+            self.SetPosition(self.PositionsDict['NeutralA'])
 
     def SetPosition(self, pos):
         self.ra_ma.SetPosition('set',pos)
@@ -98,13 +102,33 @@ class Movement_Coordinator:
         self.UnloadSubstrateHolder()
         self.LoadSubstrateHolder()
 
-    def HandleCommand(self, var):
+    def RunPump(self, addr):
+        addr = int(addr)
+        pump = self.syr_ma.Pumps[addr]
+        self.syr_ma.StartPumping(pump)
+    
+    def StopPump(self, addr):
+        addr = int(addr)
+        pump = self.syr_ma.Pumps[addr]
+        self.syr_ma.StopPumping(pump)
+
+    def HandleCommand(self, com):
+        var = com
+        data = None
+        l = com.split(',')
+        if(len(l)==2):
+            var = l[0]
+            data = l[1]
+
         if('echo' in var or 'get' in var or 'set' in var):
             self.ra_ma.SendCommand(var)
         elif(var in self.PositionsDict.keys()):
             self.SetPosition(self.PositionsDict[var])
         elif(var in self.ActionsDict.keys()):
-            self.ActionsDict[var]()
+            if(data):
+                self.ActionsDict[var](data)
+            else:
+                self.ActionsDict[var]()
         else:
             self.cnc_ma.SendCommand(var)
 
@@ -118,11 +142,16 @@ class Movement_Coordinator:
             'LoadA': LoadA, 'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,
             'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC}
         self.ActionsDict = {'Load':self.LoadSubstrateHolder,
-            'Unload':self.UnloadSubstrateHolder,'Swap':self.SwapNewSubstrate}
+            'Unload':self.UnloadSubstrateHolder,'Swap':self.SwapNewSubstrate,
+            'Run':self.RunPump,'Stop':self.StopPump}
 
 if __name__ == '__main__':  
     mc = Movement_Coordinator()  
-    mc.SetupSerialIO()
+    mc.SetupSerialIO(
+    #    'cnc',
+    #'ra',
+    'syr'
+    )
     while True:
         var = input('Please enter a command: ')
         print('Entered: ' + var)

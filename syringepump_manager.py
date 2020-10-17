@@ -72,9 +72,13 @@ class SyringePumpManager:
     
     def StartPumping(self, pump):
         print('StartPumping(): ' + str(pump.name))
+        command = pump.address + 'RUN'
+        self.RawCommand(command)
     
     def StopPumping(self, pump):
-        print('StopPumping()' + str(pump))    
+        print('StopPumping()' + str(pump.name))    
+        command = pump.address + 'STP'
+        self.RawCommand(command)
 
     def SendCommand(self, com):
         print('SendCommand(): '+ com)
@@ -101,9 +105,9 @@ class SyringePumpManager:
             return False
 
 
-    def Setup(self):
+    def Setup(self,ports):
         print('Setup() SyringePumpManager')            
-        self.connect_to_controller()
+        self.connect_to_controller(ports)
         for p in self.Pumps:
             if not self.PumpIsTalking(p):
                 print('pump with communication issues: ' +p.name)
