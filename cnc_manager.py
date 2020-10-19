@@ -26,7 +26,7 @@ class CNCManager:
                 ser.readlines()
                 return s
     
-    def WaitForResponse(self,response = 'ok'):
+    def WaitForResponse(self, response = 'ok'):
         ser.reset_input_buffer()
         SerialBufferIsClear = False
         while(SerialBufferIsClear != True):
@@ -36,7 +36,7 @@ class CNCManager:
                 SerialBufferIsClear = True
                 print("got the response: " + response)
 
-    def SendCommand(self, com,shouldwaitforok = True):        
+    def SendCommand(self, com, shouldwaitforok = True):        
         if ser.is_open:
             print('sending command: ' + com)
             command = str(com)+"\n"
