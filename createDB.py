@@ -1,6 +1,7 @@
 import sqlite3
 from os.path import expanduser
 from pathlib import Path
+import datetime
 home = expanduser('~')
 savedir = home + '/SIEData/'
 Path(savedir).mkdir(parents=True, exist_ok=True)
@@ -14,7 +15,8 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS Runs(
 run_id INTEGER PRIMARY KEY,
-run_name TEXT)
+run_name TEXT,
+run_date DATE)
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS Commands(
@@ -27,6 +29,8 @@ CREATE TABLE IF NOT EXISTS Commands(
 """)
 conn.commit()
 #insert default data
-values = [(None,"runny"),(None,"runnier"),(None,"runniest")]
-cursor.executemany("INSERT INTO Runs VALUES (?,?)", values)
+values = [(None,"runny",datetime.date.today()),
+(None,"runnier",datetime.date.today()),
+(None,"runniest",datetime.date.today())]
+cursor.executemany("INSERT INTO Runs VALUES (?,?,?)", values)
 conn.commit()
