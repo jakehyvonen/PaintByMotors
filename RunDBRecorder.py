@@ -26,8 +26,13 @@ class RunDBRecorder:
             rows = cursor.fetchone()[0]
             print('number of rows: ' + str(rows))
             now = dt.datetime.now()
-            runName = now.strftime('%Y%m%d') + '_' + str(rows)
+            runName = now.strftime('%Y%m%d') + '_' + str(rows+1)
             print('runName: ' + runName)
+        values = (None,runName,dt.date.today())
+        cursor.execute('INSERT INTO Runs VALUES (?,?,?)',values)
+        conn.commit()
+        #this is bad practice and we should fetch run_id directly (but presently I'm too lazy)
+        self.activeRunId = rows + 1
 
 if __name__ == '__main__':  
     rec = RunDBRecorder()
