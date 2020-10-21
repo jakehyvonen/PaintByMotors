@@ -2,6 +2,7 @@ import sqlite3
 from os.path import expanduser
 from pathlib import Path
 import datetime
+
 home = expanduser('~')
 savedir = home + '/SIEData/'
 Path(savedir).mkdir(parents=True, exist_ok=True)
