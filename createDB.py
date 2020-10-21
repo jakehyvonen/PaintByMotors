@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS Commands(
     timepoint REAL NOT NULL,
     cnc_comm TEXT,
     ra_comm TEXT,
-    syr_comm TEXT
-)
+    syr_comm TEXT,
+    command_run_id INTEGER NOT NULL,
+    FOREIGN KEY (command_run_id) REFERENCES Runs(run_id)
+    )
 """)
 conn.commit()
 #insert default data
