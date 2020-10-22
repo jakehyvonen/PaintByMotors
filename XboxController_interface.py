@@ -8,6 +8,7 @@ class Xbox_Interface:
     def __init__(self):
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.msg = None
+        self.isActive = False
         #self.HandleInput()
         th = threading.Thread(target=self.HandleInput)
         th.start()
@@ -20,6 +21,7 @@ class Xbox_Interface:
 
     def HandleInput(self):
         try:
+            self.isActive = True
             with Xbox360Controller(0, axis_threshold=0.0) as controller:
                 # Button A events
                 controller.button_a.when_pressed = self.on_button_pressed
@@ -43,6 +45,7 @@ class Xbox_Interface:
 
                 signal.pause()
         except KeyboardInterrupt:
+            self.isActive = False
             pass
 
     #button Y:pump0, B:pump1, A:pump2
@@ -56,11 +59,21 @@ class Xbox_Interface:
             self.msg = 'Run,1'
         elif(button.name == 'button_a'):
             self.msg = 'Run,2'
+        elif(button.name == 'button_trigger_r'):
+            self.isActive = False
 
 
     def on_button_released(self, button):
         print('Button {0} was released'.format(button.name))
         self.msg = None
+        if(button.name == 'button_trigger_l'):
+            self.msg = 'Swap'
+        elif(button.name == 'button_y'):
+            self.msg = 'Stop,0'
+        elif(button.name == 'button_b'):
+            self.msg = 'Stop,1'
+        elif(button.name == 'button_a'):
+            self.msg = 'Stop,2'
 
 
     def on_axis_moved(self, axis):

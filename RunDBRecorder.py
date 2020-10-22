@@ -54,7 +54,7 @@ class RunDBRecorder:
         conn.commit()
 
     def StartRun(self, runId=None, isFresh = True):
-        print('RecorededRun()')
+        print('StartRun()')
         if isFresh:
             self.CreateNewRun()
         self.startTime = time.clock()
@@ -73,7 +73,7 @@ def RandomStr():
         random_integer = random.randint(101, MAX_LIMIT)
         # Keep appending random characters using chr(x)
         random_string += (chr(random_integer))    
-    print('random_string: ' + random_string)
+    #print('random_string: ' + random_string)
     return random_string
 
 if __name__ == '__main__':  

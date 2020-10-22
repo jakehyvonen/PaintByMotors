@@ -1,10 +1,27 @@
 import movement_coordinator as mover 
 import XboxController_interface as xbox 
 import time
+from os.path import expanduser
 
 #ToDo
 #map list of controller button events to sending string commands to mc
 #-
+home = expanduser('~')
+savedir = home + '/SIEData/'
+
+class IOOrchestrator:
+    def __init__(self,dbname='test.db'):
+        self.dbpath = savedir+dbname
+        self.xbox = xbox.Xbox_Interface()
+
+    def GetRuns(self):
+        print('GetRuns()')
+
+    def ReRunRun(self):
+        print('ReRunRun()')
+
+    def RecordXbox(self):
+        print('RecordXbox()')
 
 if __name__ == '__main__':  
     mc = mover.Movement_Coordinator('cnc','syr')

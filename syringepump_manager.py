@@ -25,8 +25,8 @@ class SyringePumpManager:
             for p in self.Pumps:
                 print('Created pump with name: ' + p.name)
                 self.PumpNames.append(p.name)
-            self.Actions = {'volpercent':self.UpdateVolPercent,
-            'start':self.StartPumping,'stop':self.StopPumping}      
+            self.Actions = {'Volpercent':self.UpdateVolPercent,
+            'Start':self.StartPumping,'Stop':self.StopPumping}      
 
     def connect_to_controller(self,ports = sc.serial_ports()):
         global ser
