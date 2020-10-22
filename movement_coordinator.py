@@ -116,7 +116,6 @@ class Movement_Coordinator:
         if(len(l)==2):
             var = l[0]
             data = l[1]
-
         if('echo' in var or 'get' in var or 'set' in var):
             self.ra_ma.SendCommand(var)
         elif(var in self.PositionsDict.keys()):
