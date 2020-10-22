@@ -34,7 +34,8 @@ class SyringePumpManager:
             print('already connected')
         else:
             print('attempting to connect to SyringePumps...')
-            s = sc.ping_controller('/dev/ttyUSB1', ports, 19200, diaquerybytes,'00'+dia60mLsyringe,11,ETXbyte)        
+            s = sc.ping_controller('/dev/ttyUSB1', ports, 19200, 
+            diaquerybytes,'00'+dia60mLsyringe,11,ETXbyte)        
             if s == -1:
                 return -1
             else:

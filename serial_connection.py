@@ -30,10 +30,10 @@ def serial_ports():
             pass
     return result
 
-def ping_controller(defaultPort, ports=serial_ports(), baud=9600, qrymsg=b'ping',
- retmsg='pong', trycount = 1, readsequence = '\n'):
+def ping_controller(defaultPort, ports=serial_ports(), baud=9600, 
+qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
     print('pinging serial with qrymsg: ' + qrymsg.decode())
-    if(ping_single_port(defaultPort,baud,qrymsg,retmsg,trycount,readsequence)):
+    if(defaultPort and ping_single_port(defaultPort,baud,qrymsg,retmsg,trycount,readsequence)):
         print('connected to default port')
         return defaultPort
     else:        
@@ -58,9 +58,10 @@ def ping_single_port(port, baud, qrymsg, retmsg, trycount, readsequence):
                 if(readsequence == '\n'):
                     ret = s.readline()
                     ret = ret.decode().rstrip()
+                #handle things different for New Era syntax
                 elif(readsequence == b'\x03'):
                     ret = s.read_until(readsequence)
-                    #strip first and last bytes to accomamodate New Era syntax
+                    #strip first and last bytes to accommodate NE
                     ret = ret.decode()[1:-1]
                     #silly workaround to ignore the status byte
                     print('ret: ' + ret)

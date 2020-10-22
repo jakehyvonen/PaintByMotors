@@ -63,8 +63,8 @@ class CNCManager:
 
 if __name__ == '__main__':
     manager = CNCManager()
-    manager.connect_to_controller()
-    #manager.Setup()
+    #manager.connect_to_controller()
+    manager.Setup()
     while True:
         var = input("Please enter a command: ")
         print("entered: "+str(var))

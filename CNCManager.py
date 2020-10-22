@@ -1,6 +1,12 @@
-import serial_manager_base
+from serial_manager_base import SerialManagerBase
+import serial_connection as sc
 
-class CNCManager(serial_manager_base):
+class CNCManager(SerialManagerBase):
+    def ConnectToDevice(self,ports = sc.serial_ports()):
+        self.name('MarlinCNC Arduino')
+        super().ConnectToDevice(defPort='/dev/ttyUSB0',
+        ports=ports, baud=115200, retmsg='echo:start')
+
     def SendCommand(self, com, waitMsg = 'M84\n'):
         super().SendCommand(com,waitMsg)
 
@@ -12,10 +18,14 @@ class CNCManager(serial_manager_base):
         self.WaitForResponse('SD card')
         self.SendCommand('G28 X0 Y0 Z0')
 
+    def Setup(self):
+        self.ConnectToDevice()
+        self.SetInitialState()
+
 if __name__ == '__main__':
     manager = CNCManager()
-    manager.connect_to_controller()
-    #manager.Setup()
+    #manager.ConnectToDevice()
+    manager.Setup()
     while True:
         var = input("Please enter a command: ")
         print("entered: "+str(var))
