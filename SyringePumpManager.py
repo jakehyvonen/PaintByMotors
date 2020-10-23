@@ -12,7 +12,7 @@ Note: if pump addresses are somehow reset, this won't work properly
 
 class SyringePumpManager(DeviceManagerBase):
     def __init__(self):
-        super().__init__(self)
+        super().__init__(self,name='NewEra Pumps')
         pump00 = SyringePump('00')
         pump01 = SyringePump('01')
         pump02 = SyringePump('02')
@@ -25,7 +25,6 @@ class SyringePumpManager(DeviceManagerBase):
         'Start':self.StartPumping,'Stop':self.StopPumping}
 
     def ConnectToDevice(self, ports = sc.serial_ports()):
-        self.name = 'NewEra Pumps'
         super().ConnectToDevice(ports=ports, defPort='/dev/ttyUSB1',
         baud=19200, qrymsg=diaquerybytes,retmsg='00'+dia60mLsyringe,
         trycount=11,readsequence=ETXbyte)

@@ -1,6 +1,6 @@
 import serial
 import serial_connection as sc
-import asyncio
+from rxpy import Observable, Observer
 
 #ser = serial.Serial()
 #ser.port = None
@@ -8,7 +8,7 @@ import asyncio
 #ser.timeout = 1
 #ser.write_timeout = 1
 
-class DeviceManagerBase:
+class DeviceManagerBase():
     def __init__(self,name = None,shouldSetup=False):
         self.connection_status = 'not connected'
         self.ser = serial.Serial(timeout=1,write_timeout=1)
@@ -65,3 +65,11 @@ class DeviceManagerBase:
 
     def Setup(self):
         raise NotImplementedError()
+
+    if __name__ == '__main__':
+    manager = DeviceManagerBase()
+    #manager.Setup()
+    while True:
+        var = input("Please enter a command: ")
+        print("entered: "+str(var))
+        manager.SendCommand(var)
