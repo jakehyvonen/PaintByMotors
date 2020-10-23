@@ -39,6 +39,7 @@ qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
     else:        
         for port in ports:
             if(ping_single_port(port,baud,qrymsg,retmsg,trycount,readsequence)):
+                print('PORT: %s' % port)
                 return port    
     print('no response to ping')
     return -1

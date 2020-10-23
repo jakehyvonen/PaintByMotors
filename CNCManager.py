@@ -2,9 +2,12 @@ from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
 
 class CNCManager(DeviceManagerBase):
+    def __init__(self):
+        super().__init__(name='MarlinCNC Arduino')
+        #self.sent_command_event = super().sent_command_event
+
     def ConnectToDevice(self,ports = sc.serial_ports()):
-        self.name('MarlinCNC Arduino')
-        super().ConnectToDevice(defPort='/dev/ttyUSB0',
+        return super().ConnectToDevice(defPort='/dev/ttyUSB0',
         ports=ports, baud=115200, retmsg='echo:start')
 
     def SendCommand(self, com, waitMsg = 'M84\n'):
@@ -22,8 +25,12 @@ class CNCManager(DeviceManagerBase):
         self.ConnectToDevice()
         self.SetInitialState()
 
+def listenForCommands(command):
+    print('heard a command: %s' % command)
+
 if __name__ == '__main__':
     manager = CNCManager()
+    manager.sent_command_event += listenForCommands
     #manager.ConnectToDevice()
     manager.Setup()
     while True:

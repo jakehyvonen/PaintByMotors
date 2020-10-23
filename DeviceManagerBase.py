@@ -1,6 +1,6 @@
 import serial
 import serial_connection as sc
-from rxpy import Observable, Observer
+#from rx3 import Observable
 
 #ser = serial.Serial()
 #ser.port = None
@@ -12,6 +12,7 @@ class DeviceManagerBase():
     def __init__(self,name = None,shouldSetup=False):
         self.connection_status = 'not connected'
         self.ser = serial.Serial(timeout=1,write_timeout=1)
+        self.sent_command_event = Event()
         if not name:
             self.name = 'Mysterial Serial Device'
         else:
@@ -27,15 +28,12 @@ class DeviceManagerBase():
         else:
             print('attempting to connect to Device: %s' % self.name)
             s = sc.ping_controller(defPort, ports, baud, qrymsg, 
-            retmsg, trycount, readsequence)        
-            if s == -1:
-                return -1
-            else:
-                self.ser.port = s
-                self.ser.baudrate = baud
-                self.ser.open()
-                self.connection_status = 'connected'
-                return s
+            retmsg, trycount, readsequence)                    
+            self.ser.port = s
+            self.ser.baudrate = baud
+            self.ser.open()
+            self.connection_status = 'connected'
+            return s
 
     def WaitForResponse(self, response = 'ok'):
         DeviceNotBusy = False
@@ -49,6 +47,7 @@ class DeviceManagerBase():
     def SendCommand(self, com, waitMsg = None):        
         if self.ser.is_open:
             print('Device %s sending command: %s' %(self.name,com))
+            self.sent_command_event.notify(com)
             command = str(com)+"\n"
             self.ser.write(command.encode())
             if waitMsg:
@@ -66,7 +65,20 @@ class DeviceManagerBase():
     def Setup(self):
         raise NotImplementedError()
 
-    if __name__ == '__main__':
+class Event:
+    def __init__(self):
+        self.listeners = []
+
+    def __iadd__(self, listener):
+        """Shortcut for using += to add a listener."""
+        self.listeners.append(listener)
+        return self
+
+    def notify(self, *args, **kwargs):
+        for listener in self.listeners:
+            listener(*args, **kwargs)
+
+if __name__ == '__main__':
     manager = DeviceManagerBase()
     #manager.Setup()
     while True:

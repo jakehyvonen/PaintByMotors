@@ -1,6 +1,6 @@
-import roboarm_manager as r_m
-import cnc_manager as c_m
-import syringepump_manager as s_m
+import RoboArmManager as r_m
+import CNCManager as c_m
+import SyringePumpManager as s_m
 import serial_connection as s_c
 import time
 
@@ -35,14 +35,14 @@ class Movement_Coordinator:
         ports = s_c.serial_ports()  
         if(self.cnc_ma):
             #don't test ports again once they're known
-            portToRemove = self.cnc_ma.connect_to_controller(ports)
-            print('removing port: ' + portToRemove)
+            portToRemove = self.cnc_ma.ConnectToDevice(ports)
+            print('removing port: ' + str(portToRemove))
             ports.remove(portToRemove)
             self.cnc_ma.SetInitialState()
             self.cnc_ma.SetPosition(self.PositionsDict['NeutralB'])
         if(self.ra_ma):
-            portToRemove = self.ra_ma.connect_to_controller(ports)
-            print('removing port: ' + portToRemove)
+            portToRemove = self.ra_ma.ConnectToDevice(ports)
+            print('removing port: ' + str(portToRemove))
             ports.remove(portToRemove)
         if(self.syr_ma):
             self.syr_ma.Setup(ports)
@@ -53,8 +53,10 @@ class Movement_Coordinator:
             self.SetPosition(self.PositionsDict['NeutralA'])
 
     def SetPosition(self, pos):
-        self.ra_ma.SetPosition('set',pos)
-        self.cnc_ma.SetPosition(pos)
+        if self.ra_ma:
+            self.ra_ma.SetPosition('set',pos)
+        if self.cnc_ma:
+            self.cnc_ma.SetPosition(pos)
         self.current_pos = pos
 
     def RelativePosition(self, diffpos):
@@ -136,6 +138,7 @@ class Movement_Coordinator:
         self.current_pos = SystemPosition()
         if('cnc' in argv):
             self.cnc_ma = c_m.CNCManager()
+            self.cnc_ma.sent_command_event += listenForCommands
         else:
             self.cnc_ma = None
         if('ra' in argv):
@@ -155,9 +158,12 @@ class Movement_Coordinator:
         if(setupSerial):
             self.SetupSerialIO()
 
+def listenForCommands(command):
+    print('heard a command: %s' % command)
+
 if __name__ == '__main__':  
     mc = Movement_Coordinator(
-    #'cnc',
+    'cnc',
     #'ra',
     #'syr'
     )  
