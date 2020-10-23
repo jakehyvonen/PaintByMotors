@@ -1,7 +1,7 @@
-from serial_manager_base import SerialManagerBase
+from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
 
-class CNCManager(SerialManagerBase):
+class CNCManager(DeviceManagerBase):
     def ConnectToDevice(self,ports = sc.serial_ports()):
         self.name('MarlinCNC Arduino')
         super().ConnectToDevice(defPort='/dev/ttyUSB0',

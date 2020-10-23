@@ -1,4 +1,4 @@
-from serial_manager_base import SerialManagerBase
+from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
 
 m2 = '090'
@@ -6,7 +6,7 @@ m3 = '090'
 m4 = '090'
 m5 = '090'
 
-class RoboArmManager(SerialManagerBase):
+class RoboArmManager(DeviceManagerBase):
     def ConnectToDevice(self,ports = sc.serial_ports()):
         self.name = 'RoboArm Arduino'
         super().ConnectToDevice(defPort='/dev/ttyACM0',

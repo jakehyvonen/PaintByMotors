@@ -1,4 +1,4 @@
-from serial_manager_base import SerialManagerBase
+from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
 import enum
 
@@ -10,7 +10,7 @@ Note: if pump addresses are somehow reset, this won't work properly
 --> addresses would need to be re-set individually via serial_connection.py 
 '''
 
-class SyringePumpManager(SerialManagerBase):
+class SyringePumpManager(DeviceManagerBase):
     def __init__(self):
         super().__init__(self)
         pump00 = SyringePump('00')

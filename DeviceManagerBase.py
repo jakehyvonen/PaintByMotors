@@ -8,7 +8,7 @@ import asyncio
 #ser.timeout = 1
 #ser.write_timeout = 1
 
-class SerialManagerBase:
+class DeviceManagerBase:
     def __init__(self,name = None,shouldSetup=False):
         self.connection_status = 'not connected'
         self.ser = serial.Serial(timeout=1,write_timeout=1)
