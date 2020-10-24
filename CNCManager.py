@@ -7,7 +7,7 @@ class CNCManager(DeviceManagerBase):
         #self.sent_command_event = super().sent_command_event
 
     def ConnectToDevice(self,ports = sc.serial_ports()):
-        return super().ConnectToDevice(defPort='/dev/ttyUSB0',
+        return super().ConnectToDevice(defPort='/dev/ttyUSB1',
         ports=ports, baud=115200, retmsg='echo:start')
 
     def SendCommand(self, com, waitMsg = 'M84\n'):
@@ -15,7 +15,7 @@ class CNCManager(DeviceManagerBase):
 
     def SetPosition(self,pos):
         com = 'G1 X'+str(pos.X)+' Y'+str(pos.Y)+' Z'+str(pos.Z)+' E'+str(pos.E)
-        super().SendCommand(com)
+        self.SendCommand(com)
 
     def SetInitialState(self):
         self.WaitForResponse('SD card')

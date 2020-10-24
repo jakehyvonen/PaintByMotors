@@ -147,6 +147,7 @@ class Movement_Coordinator:
             self.ra_ma = None
         if('syr' in argv):
             self.syr_ma = s_m.SyringePumpManager()
+            self.syr_ma.sent_command_event += listenForCommands
         else:
             self.syr_ma = None
         self.PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 
@@ -164,8 +165,8 @@ def listenForCommands(command):
 if __name__ == '__main__':  
     mc = Movement_Coordinator(
     'cnc',
-    #'ra',
-    #'syr'
+    'ra',
+    'syr'
     )  
     while True:
         var = input('Please enter a command: ')

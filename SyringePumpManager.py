@@ -12,7 +12,7 @@ Note: if pump addresses are somehow reset, this won't work properly
 
 class SyringePumpManager(DeviceManagerBase):
     def __init__(self):
-        super().__init__(self,name='NewEra Pumps')
+        super().__init__(name='NewEra Pumps')
         pump00 = SyringePump('00')
         pump01 = SyringePump('01')
         pump02 = SyringePump('02')
@@ -25,50 +25,55 @@ class SyringePumpManager(DeviceManagerBase):
         'Start':self.StartPumping,'Stop':self.StopPumping}
 
     def ConnectToDevice(self, ports = sc.serial_ports()):
-        super().ConnectToDevice(ports=ports, defPort='/dev/ttyUSB1',
+        super().ConnectToDevice(ports=ports, defPort='/dev/ttyUSB0',
         baud=19200, qrymsg=diaquerybytes,retmsg='00'+dia60mLsyringe,
         trycount=11,readsequence=ETXbyte)
 
     def UpdateVolPercent(self, pump):
         print('UpdateVolPercent()')
         command = pump.address + 'VOL'
-        maxV = self.RawCommand(command)
+        maxV = self.SendCommand(command)
         pump.maxVol = maxV
         command = pump.address + 'DIS'
-        dis = self.RawCommand(command)
+        dis = self.SendCommand(command)
     
     def StartPumping(self, pump):
         print('StartPumping(): ' + str(pump.name))
         command = pump.address + 'RUN'
-        self.RawCommand(command)
+        self.SendCommand(command)
     
     def StopPumping(self, pump):
         print('StopPumping()' + str(pump.name))    
         command = pump.address + 'STP'
-        self.RawCommand(command)
+        self.SendCommand(command)
 
-    def RawCommand(self, com, getResponse = True, tryCount = 1):     
+    def SendCommand(self, com, getResponse = True, tryCount = 1):  
+        super().SendCommand(com, term='\r')
+        if getResponse:
+            #strip first and last bytes to accommodate New Era syntax
+            response = self.ser.read_until(ETXbyte).decode().rstrip()[1:-1]
+            print('Pumps response: ' + response)              
+            return response
+        '''p sure this is silly biz
         if self.ser.is_open:
-            print('RawCommand(): ' + com)            
+            print('SendCommand(): ' + com)   
+            super().sent_command_event.notify(com)         
             if('echo' in com or 'get' in com):
                 getResponse = True
             command = str(com)+"\r"
             self.ser.write(command.encode())
             if getResponse:
-                #strip first and last bytes to accomamodate New Era syntax
+                #strip first and last bytes to accommodate New Era syntax
                 response = self.ser.read_until(ETXbyte).decode().rstrip()[1:-1]
-                print('response: ' + response)              
+                print('Pumps response: ' + response)              
                 return response
         else:
             print('Serial closed. Attempting to open')
-            try:
-                self.ser.open()
-            except:
-                print('oh heavens, there is a connection problem')
-                pass    
+            '''
+           
 
-    def SendCommand(self, com):
-        print('SendCommand(): '+ com)
+    def DoAction(self, com):
+        print('DoAction(): '+ com)
         pcom = str(com).split()
         pn = pcom[0]
         for pump in self.Pumps:
@@ -81,11 +86,11 @@ class SyringePumpManager(DeviceManagerBase):
                 else:
                     print("Command not found <(0_0)>")
         if pn not in self.PumpNames:
-            manager.RawCommand(str(com),True)
+            manager.SendCommand(str(com),True)
 
     def PumpIsTalking(self,pump):
         print('PumpIsTalking()')
-        ret = self.RawCommand(pump.address+'DIA')  
+        ret = self.SendCommand(pump.address+'DIA')  
         #ignore status byte
         ret = ret[:2] + ret[3:]     
         if ret == pump.address + dia60mLsyringe[1:]:

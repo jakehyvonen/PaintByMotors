@@ -13,6 +13,7 @@ class DeviceManagerBase():
         self.connection_status = 'not connected'
         self.ser = serial.Serial(timeout=1,write_timeout=1)
         self.sent_command_event = Event()
+        self.emulator_mode = False
         if not name:
             self.name = 'Mysterial Serial Device'
         else:
@@ -23,7 +24,9 @@ class DeviceManagerBase():
     def ConnectToDevice(self, defPort=None, baud = 9600, qrymsg=b'ping', 
     retmsg='pong', trycount=1, ports = sc.serial_ports(), 
     readsequence = '\n'):
-        if self.ser.is_open:
+        if self.emulator_mode:
+            print('starting in emulator mode')
+        elif self.ser.is_open:
             print('already connected')
         else:
             print('attempting to connect to Device: %s' % self.name)
@@ -44,11 +47,11 @@ class DeviceManagerBase():
                 DeviceNotBusy = True
                 print("got the response: " + response)
 
-    def SendCommand(self, com, waitMsg = None):        
-        if self.ser.is_open:
-            print('Device %s sending command: %s' %(self.name,com))
+    def SendCommand(self, com, waitMsg = None, term = "\n"):        
+        if not self.emulator_mode:
+            print('Device %s sending command: %s' % (self.name,com))
             self.sent_command_event.notify(com)
-            command = str(com)+"\n"
+            command = str(com)+term
             self.ser.write(command.encode())
             if waitMsg:
                 self.WaitForResponse()            
@@ -57,7 +60,8 @@ class DeviceManagerBase():
                 self.ser.write(waitMsg.encode())
                 self.WaitForResponse()
         else:
-            print('serial not open')
+            print('Emulator %s sending command: %s' % (self.name,com))
+            self.sent_command_event.notify(com)
 
     def SetInitialState(self):
         raise NotImplementedError()

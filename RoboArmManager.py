@@ -9,11 +9,12 @@ m5 = '090'
 class RoboArmManager(DeviceManagerBase):
     def ConnectToDevice(self,ports = sc.serial_ports()):
         self.name = 'RoboArm Arduino'
-        super().ConnectToDevice(defPort='/dev/ttyACM0',
+        p= super().ConnectToDevice(defPort='/dev/ttyACM0',
         ports=ports, trycount=11)
         self.ser.timeout = 11
         self.ser.write(b'get')
-        print('get response: ' + self.ser.readline().decode().rstrip())    
+        print('get response: ' + self.ser.readline().decode().rstrip()) 
+        return p   
 
     def SetPosition(self, com, position):
         print('SetPosition com: '+com)
