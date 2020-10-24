@@ -130,7 +130,7 @@ class Movement_Coordinator:
         else:
             self.cnc_ma.SendCommand(var)
 
-    def __init__(self, *argv, setupSerial = True):
+    def __init__(self, *argv, setupSerial = True, emulating = False):
         #default to initializing all devices
         if(len(argv) == 0):
             argv = ['cnc','ra','syr']
@@ -139,15 +139,22 @@ class Movement_Coordinator:
         if('cnc' in argv):
             self.cnc_ma = c_m.CNCManager()
             self.cnc_ma.sent_command_event += listenForCommands
+            if emulating:
+                self.cnc_ma.emulator_mode = True
         else:
             self.cnc_ma = None
         if('ra' in argv):
             self.ra_ma = r_m.RoboArmManager()
+            self.ra_ma.sent_command_event += listenForCommands
+            if emulating:
+                self.ra_ma.emulator_mode = True
         else:
             self.ra_ma = None
         if('syr' in argv):
             self.syr_ma = s_m.SyringePumpManager()
             self.syr_ma.sent_command_event += listenForCommands
+            if emulating:
+                self.syr_ma.emulator_mode = True
         else:
             self.syr_ma = None
         self.PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 
@@ -156,7 +163,7 @@ class Movement_Coordinator:
         self.ActionsDict = {'Load':self.LoadSubstrateHolder,
             'Unload':self.UnloadSubstrateHolder,'Swap':self.SwapNewSubstrate,
             'Run':self.RunPump,'Stop':self.StopPump}
-        if(setupSerial):
+        if(setupSerial and not emulating):
             self.SetupSerialIO()
 
 def listenForCommands(command):
@@ -166,7 +173,8 @@ if __name__ == '__main__':
     mc = Movement_Coordinator(
     'cnc',
     'ra',
-    'syr'
+    'syr',
+    emulating=True
     )  
     while True:
         var = input('Please enter a command: ')

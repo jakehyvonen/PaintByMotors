@@ -49,7 +49,7 @@ class SyringePumpManager(DeviceManagerBase):
 
     def SendCommand(self, com, getResponse = True, tryCount = 1):  
         super().SendCommand(com, term='\r')
-        if getResponse:
+        if getResponse and not self.emulator_mode:
             #strip first and last bytes to accommodate New Era syntax
             response = self.ser.read_until(ETXbyte).decode().rstrip()[1:-1]
             print('Pumps response: ' + response)              
