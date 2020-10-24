@@ -88,7 +88,7 @@ class Xbox_Interface:
 
 
     def on_axis_moved(self, axis):
-        #print('Axis {0} moved to {1} {2}'.format(axis.name, axis.x, axis.y))
+        print('Axis {0} moved to {1} {2}'.format(axis.name, axis.x, axis.y))
         self.axis_moved_event.notify(axis)
         #this should all be moved to IOOrchestrator
         if(axis.name == 'axis_l'):

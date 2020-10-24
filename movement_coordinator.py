@@ -3,7 +3,7 @@ import CNCManager as c_m
 import SyringePumpManager as s_m
 import serial_connection as s_c
 import time
-from SystemPosition import SystemPosition
+from SystemPosition import *
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
@@ -64,7 +64,8 @@ class Movement_Coordinator:
         newpos.Y += diffpos.Y 
         newpos.Z += diffpos.Z
         newpos.E += diffpos.E
-        self.SetPosition(newpos)
+        if(PositionChanged(newpos, diffpos)):
+            self.SetPosition(newpos)
 
     def LoadSubstrateHolder(self):
         self.isBusy = True

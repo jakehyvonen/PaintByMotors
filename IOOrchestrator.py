@@ -3,6 +3,7 @@ from xbox360controller import controller
 import XboxController_interface as xbox 
 import time
 from os.path import expanduser
+from decimal import *
 
 #ToDo
 #map list of controller button events to sending string commands to mc
@@ -31,7 +32,7 @@ class IOOrchestrator:
         print('RecordXbox()')     
         self.xbox.button_press_event += self.HandleButtonPress
         self.xbox.button_release_event += self.HandleButtonRelease
-
+        self.xbox.axis_moved_event += self.HandleAxisMove
 
     def CNCCommand(self):
         print('CNCCommand()')
@@ -67,16 +68,30 @@ class IOOrchestrator:
         self.mc.HandleCommand(msg)
 
     def HandleAxisMove(self, axis):
-        if(axis.name == 'axis_l'):
+        if(axis.name == 'axis_r'):
             if(abs(axis.x) > 0.1):
-                self.current_pos.X = axis.x
+                self.current_pos.X = MakeDec(axis.x)
             else:
                 self.current_pos.X = 0
             if(abs(axis.y) > 0.1):
-                self.current_pos.Y = axis.y
+                self.current_pos.Y = MakeDec(axis.y)
             else:
                 self.current_pos.Y = 0
+            self.mc.RelativePosition(self.current_pos)
+        if(axis.name == 'axis_l'):
+            if(abs(axis.x) > 0.1):
+                self.current_pos.M4 = MakeDec(axis.x)
+            else:
+                self.current_pos.M4 = 0
+            if(abs(axis.y) > 0.1):
+                self.current_pos.M5 = MakeDec(axis.y)
+            else:
+                self.current_pos.M5 = 0
+            self.mc.RelativePosition(self.current_pos)
 
+def MakeDec(num):
+    r = Decimal(str(num)).quantize(Decimal('.01'), rounding=ROUND_UP)
+    return r
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()

@@ -1,6 +1,6 @@
 from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
-from SystemPosition import SystemPosition
+import SystemPosition
 
 m2 = '090'
 m3 = '090'
@@ -10,7 +10,7 @@ m5 = '090'
 class RoboArmManager(DeviceManagerBase):
     def __init__(self):
         super().__init__(name='RoboArm Arduino')
-        self.lastpos = SystemPosition()
+        self.lastpos = SystemPosition.SystemPosition()
 
     def ConnectToDevice(self,ports = sc.serial_ports()):
         p = super().ConnectToDevice(defPort='/dev/ttyACM0',
@@ -21,7 +21,8 @@ class RoboArmManager(DeviceManagerBase):
         return p   
 
     def SetPosition(self, com, position):
-        if(self.lastpos and PositionChanged(position, self.lastpos)):
+        if(self.lastpos and 
+        SystemPosition.PositionChanged(position, self.lastpos)):
             print('SetPosition com: '+com)
             #make sure that set commands use the right syntax
             if position.M2 < 100:
@@ -61,19 +62,6 @@ class RoboArmManager(DeviceManagerBase):
 
     def Setup(self):
         print('Setup()')
-
-def PositionChanged(posA, posB):
-    if(
-        posA.M2 == posB.M2 and
-        posA.M3 == posB.M3 and
-        posA.M4 == posB.M4 and
-        posA.M5 == posB.M5
-        ):
-        print('RoboArm Position unChanged')
-        return False
-    else:
-        print('RoboArm PositionChanged')
-        return True
 
 if __name__ == '__main__':
     manager = RoboArmManager()
