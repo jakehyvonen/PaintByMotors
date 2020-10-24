@@ -13,6 +13,11 @@ class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
         self.xbox = xbox.Xbox_Interface()
+        self.mc = mover.Movement_Coordinator(
+            'cnc','ra','syr',emulating=True)
+
+    def Setup(self):
+        print('Setup()')
 
     def GetRuns(self):
         print('GetRuns()')
@@ -22,19 +27,20 @@ class IOOrchestrator:
 
     def RecordXbox(self):
         print('RecordXbox()')
+        while True:
+            x = self.xbox.get_pos().X
+            y = self.xbox.get_pos().Y
+            if(not self.mc.isBusy):
+                if(abs(x) > 0.1 or abs(y) > 0.1):
+                    print('current_pos X: ' + str(x))
+                    print('current_pos Y: ' + str(y))
+                    self.mc.RelativePosition(self.xbox.current_pos)
+            if(self.xbox.get_msg()):
+                self.mc.HandleCommand(self.xbox.msg)
+
+    def CNCCommand(self):
+        print('CNCCommand()')
 
 if __name__ == '__main__':  
-    mc = mover.Movement_Coordinator('cnc','syr')
-    xi = xbox.Xbox_Interface()
-
-    while True:
-        x = xi.get_pos().X
-        y = xi.get_pos().Y
-        if(not mc.isBusy):
-            if(abs(x) > 0.1 or abs(y) > 0.1):
-                print('current_pos X: ' + str(x))
-                print('current_pos Y: ' + str(y))
-                mc.RelativePosition(xi.current_pos)
-        if(xi.get_msg()):
-            mc.HandleCommand(xi.msg)
-        #time.sleep(0.1)
+    orc = IOOrchestrator()
+    orc.RecordXbox()

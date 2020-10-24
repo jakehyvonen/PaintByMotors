@@ -1,5 +1,6 @@
 import serial
 import serial_connection as sc
+from Events import Event
 #from rx3 import Observable
 
 #ser = serial.Serial()
@@ -68,19 +69,6 @@ class DeviceManagerBase():
 
     def Setup(self):
         raise NotImplementedError()
-
-class Event:
-    def __init__(self):
-        self.listeners = []
-
-    def __iadd__(self, listener):
-        """Shortcut for using += to add a listener."""
-        self.listeners.append(listener)
-        return self
-
-    def notify(self, *args, **kwargs):
-        for listener in self.listeners:
-            listener(*args, **kwargs)
 
 if __name__ == '__main__':
     manager = DeviceManagerBase()
