@@ -166,9 +166,18 @@ def listenForCommands(command):
 
 def SoftLimit(pos):
     for property, value in vars(pos).items():
-        print('property: ' + property + ' value: ' + str(value))
+        #print('property: ' + property + ' value: ' + str(value))
         lclval = getattr(LowerCoatingLimit,property)
-        print('lclval: ' + str(lclval))
+        uclval = getattr(UpperCoatingLimit,property)
+        if value > uclval:
+            pos.__setattr__(property,uclval)
+            #print('was greater than uclval: ' + str(uclval))
+        elif value < lclval:
+            pos.__setattr__(property,lclval)
+            #print('was less than lclval: ' + str(lclval))
+    #for property, value in vars(pos).items():
+        #print('property change?: ' + property + ' value: ' + str(value))
+    return pos
 
 if __name__ == '__main__':  
     SoftLimit(LoadA)
