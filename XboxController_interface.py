@@ -11,9 +11,9 @@ class Xbox_Interface:
         self.msg = None
         self.isActive = False
         #self.HandleInput()
-        self.cnc_command_event = Event()
-        self.ra_command_event = Event()
-        self.button_msg_event = Event()
+        self.axis_moved_event = Event()
+        self.button_press_event = Event()
+        self.button_release_event = Event()
         th = threading.Thread(target=self.HandleInput)
         th.start()
 
@@ -42,6 +42,9 @@ class Xbox_Interface:
                 # Button Trigger L events
                 controller.button_trigger_l.when_pressed = self.on_button_pressed
                 controller.button_trigger_l.when_released = self.on_button_released
+                # Button Trigger R events
+                controller.button_trigger_r.when_pressed = self.on_button_pressed
+                controller.button_trigger_r.when_released = self.on_button_released
 
                 # Left and right axis move event
                 controller.axis_l.when_moved = self.on_axis_moved
@@ -55,6 +58,8 @@ class Xbox_Interface:
     #button Y:pump0, B:pump1, A:pump2
     def on_button_pressed(self, button):
         print('Button {0} was pressed'.format(button.name))
+        self.button_press_event.notify(button)
+        #this should all be moved to IOOrchestrator
         if(button.name == 'button_trigger_l'):
             self.msg = 'Swap'
         elif(button.name == 'button_y'):
@@ -69,6 +74,8 @@ class Xbox_Interface:
 
     def on_button_released(self, button):
         print('Button {0} was released'.format(button.name))
+        self.button_release_event.notify(button)
+        #this should all be moved to IOOrchestrator
         self.msg = None
         if(button.name == 'button_trigger_l'):
             self.msg = 'Swap'
@@ -82,6 +89,8 @@ class Xbox_Interface:
 
     def on_axis_moved(self, axis):
         #print('Axis {0} moved to {1} {2}'.format(axis.name, axis.x, axis.y))
+        self.axis_moved_event.notify(axis)
+        #this should all be moved to IOOrchestrator
         if(axis.name == 'axis_l'):
             if(abs(axis.x) > 0.1):
                 self.current_pos.X = axis.x

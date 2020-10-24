@@ -1,4 +1,5 @@
 import movement_coordinator as mover 
+from xbox360controller import controller
 import XboxController_interface as xbox 
 import time
 from os.path import expanduser
@@ -13,6 +14,7 @@ class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
         self.xbox = xbox.Xbox_Interface()
+        self.current_pos = mover.SystemPosition(0,0,0,0,0,0,0,0)
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',emulating=True)
 
@@ -26,9 +28,60 @@ class IOOrchestrator:
         print('ReRunRun()')
 
     def RecordXbox(self):
-        print('RecordXbox()')
+        print('RecordXbox()')     
+        self.xbox.button_press_event += self.HandleButtonPress
+        self.xbox.button_release_event += self.HandleButtonRelease
 
-        ''' ;)
+
+    def CNCCommand(self):
+        print('CNCCommand()')
+        
+    def HandleButtonPress(self, button):
+        msg = 'None'
+        if(button.name == 'button_trigger_l'):
+            msg = 'Swap'
+        elif(button.name == 'button_y'):
+            msg = 'Run,0'
+        elif(button.name == 'button_b'):
+            msg = 'Run,1'
+        elif(button.name == 'button_a'):
+            msg = 'Run,2'
+        elif(button.name == 'button_trigger_r'):
+            isActive = False
+        print('msg: %s' % msg)
+        self.mc.HandleCommand(msg)
+
+    def HandleButtonRelease(self, button):
+        msg = 'None'
+        if(button.name == 'button_trigger_l'):
+            msg = 'None'
+        elif(button.name == 'button_y'):
+            msg = 'Stop,0'
+        elif(button.name == 'button_b'):
+            msg = 'Stop,1'
+        elif(button.name == 'button_a'):
+            msg = 'Stop,2'
+        elif(button.name == 'button_trigger_r'):
+            isActive = False
+        print('msg: %s' % msg)
+        self.mc.HandleCommand(msg)
+
+    def HandleAxisMove(self, axis):
+        if(axis.name == 'axis_l'):
+            if(abs(axis.x) > 0.1):
+                self.current_pos.X = axis.x
+            else:
+                self.current_pos.X = 0
+            if(abs(axis.y) > 0.1):
+                self.current_pos.Y = axis.y
+            else:
+                self.current_pos.Y = 0
+
+
+if __name__ == '__main__':  
+    orc = IOOrchestrator()
+    orc.RecordXbox()
+    ''' ;)
         while True:
             x = self.xbox.get_pos().X
             y = self.xbox.get_pos().Y
@@ -39,10 +92,3 @@ class IOOrchestrator:
                     self.mc.RelativePosition(self.xbox.current_pos)
             if(self.xbox.get_msg()):
                 self.mc.HandleCommand(self.xbox.msg)'''
-
-    def CNCCommand(self):
-        print('CNCCommand()')
-
-if __name__ == '__main__':  
-    orc = IOOrchestrator()
-    orc.RecordXbox()

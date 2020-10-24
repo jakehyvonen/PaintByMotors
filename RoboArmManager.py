@@ -1,6 +1,6 @@
 from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
-from movement_coordinator import SystemPosition
+from SystemPosition import SystemPosition
 
 m2 = '090'
 m3 = '090'

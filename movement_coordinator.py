@@ -3,21 +3,13 @@ import CNCManager as c_m
 import SyringePumpManager as s_m
 import serial_connection as s_c
 import time
+from SystemPosition import SystemPosition
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?
 -abstract base class for serial_device_managers
  """
-class SystemPosition:
-    def __init__(self, M2=90, M3=90, M4=90, M5=90, X=0, Y=0, Z=0, E=0):
-        self.M2 = M2
-        self.M3 = M3
-        self.M4 = M4
-        self.M5 = M5
-        self.X = X
-        self.Y = Y
-        self.Z = Z
-        self.E = E
+
 
 NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
 NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
