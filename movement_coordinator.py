@@ -10,6 +10,8 @@ from PBMSupport import *
 -abstract base class for serial_device_managers
  """
 
+LowerCoatingLimit = SystemPosition(137,180,11,11,0,0,111,0)
+UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,177)
 
 NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
 NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
@@ -66,6 +68,8 @@ class Movement_Coordinator:
         if(PositionChanged(newpos, diffpos)):
             self.SetPosition(newpos)
 
+    
+
     def LoadSubstrateHolder(self):
         self.isBusy = True
         self.SetPosition(self.PositionsDict['LoadA'])
@@ -87,7 +91,6 @@ class Movement_Coordinator:
         self.SetPosition(self.PositionsDict['NeutralA'])
         self.SetPosition(self.PositionsDict['NeutralB'])
         self.isBusy = False
-
 
     def SwapNewSubstrate(self):
         self.UnloadSubstrateHolder()
@@ -161,7 +164,15 @@ class Movement_Coordinator:
 def listenForCommands(command):
     print('heard a command: %s' % command)
 
+def SoftLimit(pos):
+    for property, value in vars(pos).items():
+        print('property: ' + property + ' value: ' + str(value))
+        lclval = getattr(LowerCoatingLimit,property)
+        print('lclval: ' + str(lclval))
+
 if __name__ == '__main__':  
+    SoftLimit(LoadA)
+    '''
     mc = Movement_Coordinator(
     'cnc',
     'ra',
@@ -172,26 +183,4 @@ if __name__ == '__main__':
         var = input('Please enter a command: ')
         print('Entered: ' + var)
         mc.HandleCommand(var)
-
-        """
-        if('echo' in var or 'get' in var or 'set' in var):
-            mc.ra_ma.SendCommand(var)
-        elif(var in mc.PositionsDict.keys()):
-            mc.SetPosition(mc.PositionsDict[var])
-        elif(var in mc.ActionsDict.keys()):
-            mc.ActionsDict[var]()
-        else:
-            mc.cnc_ma.SendCommand(var)
-
-        var = input("Enter c for cnc, r for roboarm command, q to quit: ")
-        print("Entered: "+var)
-        if(var == 'c'):
-            com = input('Please enter CNC command: ')
-            cnc_ma.SendCommand(com)
-        elif(var == 'r'):
-            com = input('Please enter roboarm command: ')
-            ra_ma.SendCommand(com)
-        elif(var == 'q'):
-            break
-        else:
-            print('Enter one of the valid letters you silly goose') """
+        '''
