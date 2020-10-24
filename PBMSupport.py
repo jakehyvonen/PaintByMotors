@@ -1,3 +1,5 @@
+from decimal import *
+
 class SystemPosition:
     def __init__(self, M2=90, M3=90, M4=90, M5=90, X=0, Y=0, Z=0, E=0):
         self.M2 = M2
@@ -26,6 +28,17 @@ def PositionChanged(posA, posB):
         print('SystemPosition changed')
         return True
 
-def MakeDec(num):
-    r = Decimal(str(num)).quantize(Decimal('.01'), rounding=ROUND_UP)
+def MakeDec(num,places = 2):
+    p = '0.1'
+    if(places == 0):
+        p = '0'
+    else:
+        for i in range(1,places) :
+            l = p.split('.')[1]
+            p = '0.0' + l
+    print('p: %s' % p)
+    r = Decimal(str(num)).quantize(Decimal(p), rounding=ROUND_HALF_DOWN)
     return r
+
+if __name__ == '__main__':
+    print('dec: ' +  str(MakeDec(2.34567,4)))

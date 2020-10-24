@@ -10,7 +10,7 @@ m5 = '090'
 class RoboArmManager(DeviceManagerBase):
     def __init__(self):
         super().__init__(name='RoboArm Arduino')
-        self.lastpos = SystemPosition.SystemPosition()
+        self.lastpos = SystemPosition()
 
     def ConnectToDevice(self,ports = sc.serial_ports()):
         p = super().ConnectToDevice(defPort='/dev/ttyACM0',
@@ -21,8 +21,9 @@ class RoboArmManager(DeviceManagerBase):
         return p   
 
     def SetPosition(self, com, position):
-        if(self.lastpos and 
-        SystemPosition.PositionChanged(position, self.lastpos)):
+        #for property, value in vars(newpos).items():
+        #    print('newpos property: ' + str(property) + ' value: ' + str(value))
+        if(PositionChanged(position, self.lastpos)):
             print('SetPosition com: '+com)
             #make sure that set commands use the right syntax
             if position.M2 < 100:

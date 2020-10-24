@@ -53,9 +53,6 @@ class Movement_Coordinator:
 
     def RelativePosition(self, diffpos):
         newpos = self.current_pos
-        #loop through properties and sum at some point
-        #for property, value in vars(mc.current_pos).items():
-        #    property.__setattr__()
         newpos.M2 += diffpos.M2
         newpos.M3 += diffpos.M3
         newpos.M4 += diffpos.M4
@@ -64,6 +61,8 @@ class Movement_Coordinator:
         newpos.Y += diffpos.Y 
         newpos.Z += diffpos.Z
         newpos.E += diffpos.E
+        #for property, value in vars(newpos).items():
+        #    print('newpos property: ' + str(property) + ' value: ' + str(value))
         if(PositionChanged(newpos, diffpos)):
             self.SetPosition(newpos)
 

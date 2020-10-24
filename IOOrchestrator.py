@@ -15,7 +15,7 @@ class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
         self.xbox = xbox.Xbox_Interface()
-        self.current_pos = mover.SystemPosition(0,0,0,0,0,0,0,0)
+        self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',emulating=True)
 
@@ -79,17 +79,19 @@ class IOOrchestrator:
                 self.current_pos.Y = 0
             self.mc.RelativePosition(self.current_pos)
         if(axis.name == 'axis_l'):
-            if(abs(axis.x) > 0.1):
-                self.current_pos.M4 = MakeDec(axis.x)
+            if(axis.x > 0.1):
+                self.current_pos.M4 = 1
+            elif(axis.x < -0.1):
+                self.current_pos.M4 = -1
             else:
                 self.current_pos.M4 = 0
-            if(abs(axis.y) > 0.1):
-                self.current_pos.M5 = MakeDec(axis.y)
+            if(axis.y > 0.1):
+                self.current_pos.M5 = 1
+            elif(axis.y < -0.1):
+                self.current_pos.M5 = -1
             else:
                 self.current_pos.M5 = 0
             self.mc.RelativePosition(self.current_pos)
-
-
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()
