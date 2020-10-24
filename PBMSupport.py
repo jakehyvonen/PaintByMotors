@@ -1,4 +1,3 @@
-
 class SystemPosition:
     def __init__(self, M2=90, M3=90, M4=90, M5=90, X=0, Y=0, Z=0, E=0):
         self.M2 = M2
@@ -26,3 +25,7 @@ def PositionChanged(posA, posB):
     else:
         print('SystemPosition changed')
         return True
+
+def MakeDec(num):
+    r = Decimal(str(num)).quantize(Decimal('.01'), rounding=ROUND_UP)
+    return r

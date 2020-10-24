@@ -3,7 +3,7 @@ from xbox360controller import controller
 import XboxController_interface as xbox 
 import time
 from os.path import expanduser
-from decimal import *
+from PBMSupport import *
 
 #ToDo
 #map list of controller button events to sending string commands to mc
@@ -89,9 +89,7 @@ class IOOrchestrator:
                 self.current_pos.M5 = 0
             self.mc.RelativePosition(self.current_pos)
 
-def MakeDec(num):
-    r = Decimal(str(num)).quantize(Decimal('.01'), rounding=ROUND_UP)
-    return r
+
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()

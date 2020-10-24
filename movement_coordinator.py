@@ -3,7 +3,7 @@ import CNCManager as c_m
 import SyringePumpManager as s_m
 import serial_connection as s_c
 import time
-from SystemPosition import *
+from PBMSupport import *
 
 """ ToDo:
 -multithread to allow concurrent movement of roboarm + cnc + pumps?

@@ -1,6 +1,6 @@
 from DeviceManagerBase import DeviceManagerBase
 import serial_connection as sc
-import SystemPosition
+from PBMSupport import *
 
 m2 = '090'
 m3 = '090'
