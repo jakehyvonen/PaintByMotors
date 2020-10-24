@@ -3,6 +3,7 @@ import time
 import threading
 from xbox360controller import Xbox360Controller
 from movement_coordinator import SystemPosition
+from Events import Event
 
 class Xbox_Interface:
     def __init__(self):
@@ -10,6 +11,9 @@ class Xbox_Interface:
         self.msg = None
         self.isActive = False
         #self.HandleInput()
+        self.cnc_command_event = Event()
+        self.ra_command_event = Event()
+        self.button_msg_event = Event()
         th = threading.Thread(target=self.HandleInput)
         th.start()
 

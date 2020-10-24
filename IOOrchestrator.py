@@ -27,6 +27,8 @@ class IOOrchestrator:
 
     def RecordXbox(self):
         print('RecordXbox()')
+
+        ''' ;)
         while True:
             x = self.xbox.get_pos().X
             y = self.xbox.get_pos().Y
@@ -36,7 +38,7 @@ class IOOrchestrator:
                     print('current_pos Y: ' + str(y))
                     self.mc.RelativePosition(self.xbox.current_pos)
             if(self.xbox.get_msg()):
-                self.mc.HandleCommand(self.xbox.msg)
+                self.mc.HandleCommand(self.xbox.msg)'''
 
     def CNCCommand(self):
         print('CNCCommand()')
