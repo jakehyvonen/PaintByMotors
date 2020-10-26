@@ -34,18 +34,19 @@ class Movement_Coordinator:
     def SetPosition(self, pos):        
         if self.cnc_ma and pos.CNC:
             self.cnc_ma.SetPosition(pos)
+            self.current_pos.CNC = pos.CNC
         if self.ra_ma and pos.Servo:
             self.ra_ma.SetPosition('set',pos)
-        self.current_pos = pos
+            self.current_pos.Servo = pos.Servo
 
     def RelativePosition(self, diffpos):
         oldpos = self.current_pos
         cnc = None
         servo = None
         if diffpos.CNC:
-            cnc = self.current_pos.CNC + diffpos.CNC
+            cnc = PositionSum(diffpos.CNC,self.current_pos.CNC)
         if diffpos.Servo:
-            servo = self.current_pos.Servo + diffpos.Servo
+            servo = PositionSum(diffpos.Servo,self.current_pos.Servo)
         newpos = SystemPosition(cnc=cnc, servo=servo)
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))

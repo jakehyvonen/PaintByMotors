@@ -4,6 +4,7 @@ import XboxController_interface as xbox
 from time import sleep
 from os.path import expanduser
 from PositionSupport import *
+from PBMSupport import *
 import threading
 
 #ToDo
@@ -18,10 +19,10 @@ class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
         self.xbox = xbox.Xbox_Interface()
-        self.delay = 1.1
+        self.delay = 0.1
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
-        self.current_cnc_pos = CNCPosition()
-        self.current_servo_pos = ServoPosition()
+        self.current_cnc_pos = CNCPosition(0,0,0,0)
+        self.current_servo_pos = ServoPosition(0,0,0,0)
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',emulating=True)
     

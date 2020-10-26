@@ -117,3 +117,30 @@ def ServoPositionChanged(posA, posB):
     else:
         print('ServoPosition changed')
         return True
+
+def PositionSum(posA, posB):
+    if type(posA) == CNCPosition:
+        newPos = CNCPosition()
+    elif type(posA) == ServoPosition:
+        newPos = ServoPosition()
+    for property, value in vars(posA).items():
+        try:
+            #print('property: ' + property + ' valueA: ' + str(value))
+            posBval = getattr(posB,property)
+            #print('property: ' + property + ' valueB: ' + str(posBval))
+            newVal = value + posBval
+            newPos.__setattr__(property,newVal)
+        except:
+            #fucking error handling, how does it work?
+            pass
+    #for property, value in vars(newPos).items():
+        #print('property change?: ' + property + ' value: ' + str(value))
+    return newPos
+
+if __name__ == '__main__':
+    Apos = CNCPosition(1,2,3,4)
+    Bpos = CNCPosition(3,3,3,3)
+    #Cpos = ServoPosition(4,5,6,7)
+    #Dpos = ServoPosition(6,6,6,6)
+    PositionSum(Bpos,Apos)
+    #PositionSum(Dpos,Cpos)
