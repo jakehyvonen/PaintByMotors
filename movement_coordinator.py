@@ -3,22 +3,11 @@ import CNCManager as c_m
 import SyringePumpManager as s_m
 import serial_connection as s_c
 import time
-from PBMSupport import *
+from PositionSupport import *
 
 """ ToDo:
--multithread to allow concurrent movement of roboarm + cnc + pumps?
--abstract base class for serial_device_managers
+-multithreading to allow concurrent movement of roboarm + cnc + pumps?
  """
-
-NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
-NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
-LoadA = SystemPosition(11,111,0,90,48,0,151,0)
-LoadB = SystemPosition(11,111,0,90,48,0,7,0)
-LoadC = SystemPosition(11,87,0,90,48,0,1,0)
-LoadD = SystemPosition(11,87,0,90,48,0,151,0)
-UnloadA = SystemPosition(171,71,180,90,39,0,151,0)
-UnloadB = SystemPosition(171,71,180,90,39,0,342,0)
-UnloadC = SystemPosition(171,71,180,90,39,0,342,-322)
 
 class Movement_Coordinator:    
     def SetupSerialIO(self):
@@ -38,28 +27,26 @@ class Movement_Coordinator:
             self.syr_ma.Setup(ports)
         if(self.cnc_ma):
             time.sleep(1.1)
-            self.SetPosition(self.PositionsDict['NeutralB'])
+            self.SetPosition(PositionsDict['NeutralB'])
             time.sleep(1.1)
-            self.SetPosition(self.PositionsDict['NeutralA'])
+            self.SetPosition(PositionsDict['NeutralA'])
 
-    def SetPosition(self, pos):
-        if self.ra_ma:
-            self.ra_ma.SetPosition('set',pos)
-        if self.cnc_ma:
+    def SetPosition(self, pos):        
+        if self.cnc_ma and pos.CNC:
             self.cnc_ma.SetPosition(pos)
+        if self.ra_ma and pos.Servo:
+            self.ra_ma.SetPosition('set',pos)
         self.current_pos = pos
 
     def RelativePosition(self, diffpos):
         oldpos = self.current_pos
-        m2 = self.current_pos.M2 + diffpos.M2
-        m3 = self.current_pos.M3 + diffpos.M3
-        m4 = self.current_pos.M4 + diffpos.M4
-        m5 = self.current_pos.M5 + diffpos.M5
-        x = self.current_pos.X + diffpos.X
-        y = self.current_pos.Y + diffpos.Y
-        z = self.current_pos.Z + diffpos.Z
-        e = self.current_pos.E + diffpos.E
-        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)
+        cnc = None
+        servo = None
+        if diffpos.CNC:
+            cnc = self.current_pos.CNC + diffpos.CNC
+        if diffpos.Servo:
+            servo = self.current_pos.Servo + diffpos.Servo
+        newpos = SystemPosition(cnc=cnc, servo=servo)
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))
         if(PositionChanged(newpos, oldpos)):
@@ -67,23 +54,23 @@ class Movement_Coordinator:
 
     def LoadSubstrateHolder(self):
         self.isBusy = True
-        self.SetPosition(self.PositionsDict['LoadA'])
-        self.SetPosition(self.PositionsDict['LoadB'])
-        self.SetPosition(self.PositionsDict['LoadC'])
-        self.SetPosition(self.PositionsDict['LoadD'])
-        self.SetPosition(self.PositionsDict['NeutralB'])
-        self.SetPosition(self.PositionsDict['NeutralA'])
+        self.SetPosition(PositionsDict['LoadA'])
+        self.SetPosition(PositionsDict['LoadB'])
+        self.SetPosition(PositionsDict['LoadC'])
+        self.SetPosition(PositionsDict['LoadD'])
+        self.SetPosition(PositionsDict['NeutralB'])
+        self.SetPosition(PositionsDict['NeutralA'])
         self.isBusy = False
 
     def UnloadSubstrateHolder(self):
         self.isBusy = True
-        self.SetPosition(self.PositionsDict['UnloadA'])
-        self.SetPosition(self.PositionsDict['UnloadB'])
-        self.SetPosition(self.PositionsDict['UnloadC'])
-        self.SetPosition(self.PositionsDict['UnloadB'])
-        self.SetPosition(self.PositionsDict['UnloadA'])
-        self.SetPosition(self.PositionsDict['NeutralA'])
-        self.SetPosition(self.PositionsDict['NeutralB'])
+        self.SetPosition(PositionsDict['UnloadA'])
+        self.SetPosition(PositionsDict['UnloadB'])
+        self.SetPosition(PositionsDict['UnloadC'])
+        self.SetPosition(PositionsDict['UnloadB'])
+        self.SetPosition(PositionsDict['UnloadA'])
+        self.SetPosition(PositionsDict['NeutralA'])
+        self.SetPosition(PositionsDict['NeutralB'])
         self.isBusy = False
 
     def SwapNewSubstrate(self):
@@ -164,30 +151,32 @@ UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,177)
 
 def SoftLimit(pos):
     for property, value in vars(pos).items():
-        #print('property: ' + property + ' value: ' + str(value))
-        lclval = getattr(LowerCoatingLimit,property)
-        uclval = getattr(UpperCoatingLimit,property)
-        if value > uclval:
-            pos.__setattr__(property,uclval)
-            #print('was greater than uclval: ' + str(uclval))
-        elif value < lclval:
-            pos.__setattr__(property,lclval)
-            #print('was less than lclval: ' + str(lclval))
+        try:
+            #print('property: ' + property + ' value: ' + str(value))
+            lclval = getattr(LowerCoatingLimit,property)
+            uclval = getattr(UpperCoatingLimit,property)
+            if value > uclval:
+                pos.__setattr__(property,uclval)
+                #print('was greater than uclval: ' + str(uclval))
+            elif value < lclval:
+                pos.__setattr__(property,lclval)
+                #print('was less than lclval: ' + str(lclval))
+        except:
+            #fucking error handling, how does it work?
+            pass
     #for property, value in vars(pos).items():
         #print('property change?: ' + property + ' value: ' + str(value))
     return pos
 
 if __name__ == '__main__':  
-    SoftLimit(LoadA)
-    '''
+    #SoftLimit(LoadA)
     mc = Movement_Coordinator(
     'cnc',
     'ra',
     'syr',
-    emulating=True
+    emulating=False
     )  
     while True:
         var = input('Please enter a command: ')
         print('Entered: ' + var)
         mc.HandleCommand(var)
-        '''

@@ -25,7 +25,7 @@ class SyringePumpManager(DeviceManagerBase):
         'Start':self.StartPumping,'Stop':self.StopPumping}
 
     def ConnectToDevice(self, ports = sc.serial_ports()):
-        super().ConnectToDevice(ports=ports, defPort='/dev/ttyUSB0',
+        super().ConnectToDevice(ports=ports, defPort='/dev/ttyUSB1',
         baud=19200, qrymsg=diaquerybytes,retmsg='00'+dia60mLsyringe,
         trycount=11,readsequence=ETXbyte)
 
