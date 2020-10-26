@@ -1,16 +1,17 @@
 import signal
-import time
+from time import sleep
 import threading
 from xbox360controller import Xbox360Controller
 from PBMSupport import SystemPosition
 from Events import Event
 
 class Xbox_Interface:
-    def __init__(self):
+    def __init__(self,delay=1.1):
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.msg = None
         self.isActive = False
         #self.HandleInput()
+        self.delay = delay
         self.axis_moved_event = Event()
         self.button_press_event = Event()
         self.button_release_event = Event()
@@ -49,7 +50,7 @@ class Xbox_Interface:
                 # Left and right axis move event
                 controller.axis_l.when_moved = self.on_axis_moved
                 controller.axis_r.when_moved = self.on_axis_moved
-
+                
                 signal.pause()
         except KeyboardInterrupt:
             self.isActive = False
@@ -59,6 +60,7 @@ class Xbox_Interface:
     def on_button_pressed(self, button):
         print('Button {0} was pressed'.format(button.name))
         self.button_press_event.notify(button)
+        
         #this should all be moved to IOOrchestrator
         if(button.name == 'button_trigger_l'):
             self.msg = 'Swap'
@@ -75,6 +77,7 @@ class Xbox_Interface:
     def on_button_released(self, button):
         print('Button {0} was released'.format(button.name))
         self.button_release_event.notify(button)
+
         #this should all be moved to IOOrchestrator
         self.msg = None
         if(button.name == 'button_trigger_l'):
@@ -90,6 +93,7 @@ class Xbox_Interface:
     def on_axis_moved(self, axis):
         print('Axis {0} moved to {1} {2}'.format(axis.name, axis.x, axis.y))
         self.axis_moved_event.notify(axis)
+
         #this should all be moved to IOOrchestrator
         if(axis.name == 'axis_l'):
             if(abs(axis.x) > 0.1):

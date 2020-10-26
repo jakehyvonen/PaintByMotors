@@ -53,7 +53,7 @@ class Movement_Coordinator:
             self.cnc_ma.SetPosition(pos)
         self.current_pos = pos
 
-    def RelativePosition(self, diffpos, delay=1.1):
+    def RelativePosition(self, diffpos):
         oldpos = self.current_pos
         m2 = self.current_pos.M2 + diffpos.M2
         m3 = self.current_pos.M3 + diffpos.M3
@@ -63,9 +63,7 @@ class Movement_Coordinator:
         y = self.current_pos.Y + diffpos.Y
         z = self.current_pos.Z + diffpos.Z
         e = self.current_pos.E + diffpos.E
-        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)
-        if self.isEmulating:
-            time.sleep(delay)
+        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)       
         '''
         newpos.M2 += diffpos.M2
         newpos.M3 += diffpos.M3
