@@ -2,7 +2,7 @@ import signal
 from time import sleep
 import threading
 from xbox360controller import Xbox360Controller
-from PBMSupport import SystemPosition
+from PositionSupport import *
 from Events import Event
 
 

@@ -112,7 +112,8 @@ class Movement_Coordinator:
             argv = ['cnc','ra','syr']
         self.isBusy = False
         self.isEmulating = emulating
-        self.current_pos = SystemPosition()
+        self.current_pos = SystemPosition(cnc=CNCPosition(),
+        servo=ServoPosition())
         if('cnc' in argv):
             self.cnc_ma = c_m.CNCManager()
             self.cnc_ma.sent_command_event += listenForCommands

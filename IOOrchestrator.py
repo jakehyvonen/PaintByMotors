@@ -3,7 +3,7 @@ from xbox360controller import controller
 import XboxController_interface as xbox 
 from time import sleep
 from os.path import expanduser
-from PBMSupport import *
+from PositionSupport import *
 import threading
 
 #ToDo
@@ -20,9 +20,10 @@ class IOOrchestrator:
         self.xbox = xbox.Xbox_Interface()
         self.delay = 1.1
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
+        self.current_cnc_pos = CNCPosition()
+        self.current_servo_pos = ServoPosition()
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',emulating=True)
-
     
     def Setup(self):
         print('Setup()')
@@ -58,28 +59,30 @@ class IOOrchestrator:
         else:
             if(axis.name == 'axis_r'):
                 if(abs(axis.x) > 0.1):
-                    self.current_pos.X = MakeDec(axis.x)
+                    self.current_cnc_pos.X = MakeDec(axis.x)
                 else:
-                    self.current_pos.X = 0
+                    self.current_cnc_pos.X = 0
                 if(abs(axis.y) > 0.1):
-                    self.current_pos.Y = MakeDec(axis.y)
+                    self.current_cnc_pos.Y = MakeDec(axis.y)
                 else:
-                    self.current_pos.Y = 0
+                    self.current_cnc_pos.Y = 0
+                self.current_pos.CNC = self.current_cnc_pos
                 self.mc.RelativePosition(self.current_pos)
                 self.StartDelay()
             if(axis.name == 'axis_l'):
                 if(axis.x > 0.1):
-                    self.current_pos.M4 = 1
+                    self.current_servo_pos.M4 = 1
                 elif(axis.x < -0.1):
-                    self.current_pos.M4 = -1
+                    self.current_servo_pos.M4 = -1
                 else:
-                    self.current_pos.M4 = 0
+                    self.current_servo_pos.M4 = 0
                 if(axis.y > 0.1):
-                    self.current_pos.M5 = 1
+                    self.current_servo_pos.M5 = 1
                 elif(axis.y < -0.1):
-                    self.current_pos.M5 = -1
+                    self.current_servo_pos.M5 = -1
                 else:
-                    self.current_pos.M5 = 0
+                    self.current_servo_pos.M5 = 0
+                self.current_pos.Servo = self.current_servo_pos
                 self.mc.RelativePosition(self.current_pos)
                 self.StartDelay()
         

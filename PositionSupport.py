@@ -1,3 +1,8 @@
+'''
+ToDo:
+Add functions to sum ServoPositions and CNCPositions (RelativePosition)
+'''
+
 class CNCPosition:
     def __init__(self, X=0, Y=0, Z=0, E=0):
         self.X = X
