@@ -63,8 +63,7 @@ class RunDBRecorder:
 
     def StopRun(self):
         if self.isRecording:
-            self.isRecording = False
-        
+            self.isRecording = False        
 
 def RandomStr():
     MAX_LIMIT = 111    

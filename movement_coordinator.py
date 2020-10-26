@@ -10,9 +10,6 @@ from PBMSupport import *
 -abstract base class for serial_device_managers
  """
 
-LowerCoatingLimit = SystemPosition(137,180,11,11,0,0,111,0)
-UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,177)
-
 NeutralA = SystemPosition(137,180,33,90,0,0,151,0)
 NeutralB = SystemPosition(17,111,1,90,0,0,151,0)
 LoadA = SystemPosition(11,111,0,90,48,0,151,0)
@@ -22,7 +19,6 @@ LoadD = SystemPosition(11,87,0,90,48,0,151,0)
 UnloadA = SystemPosition(171,71,180,90,39,0,151,0)
 UnloadB = SystemPosition(171,71,180,90,39,0,342,0)
 UnloadC = SystemPosition(171,71,180,90,39,0,342,-322)
-
 
 class Movement_Coordinator:    
     def SetupSerialIO(self):
@@ -63,22 +59,11 @@ class Movement_Coordinator:
         y = self.current_pos.Y + diffpos.Y
         z = self.current_pos.Z + diffpos.Z
         e = self.current_pos.E + diffpos.E
-        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)       
-        '''
-        newpos.M2 += diffpos.M2
-        newpos.M3 += diffpos.M3
-        newpos.M4 += diffpos.M4
-        newpos.M5 += diffpos.M5
-        newpos.X += diffpos.X
-        newpos.Y += diffpos.Y 
-        newpos.Z += diffpos.Z
-        newpos.E += diffpos.E'''
+        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))
         if(PositionChanged(newpos, oldpos)):
-            self.SetPosition(newpos)
-
-    
+            self.SetPosition(newpos)    
 
     def LoadSubstrateHolder(self):
         self.isBusy = True
@@ -89,7 +74,6 @@ class Movement_Coordinator:
         self.SetPosition(self.PositionsDict['NeutralB'])
         self.SetPosition(self.PositionsDict['NeutralA'])
         self.isBusy = False
-
 
     def UnloadSubstrateHolder(self):
         self.isBusy = True
@@ -174,6 +158,9 @@ class Movement_Coordinator:
 
 def listenForCommands(command):
     print('heard a command: %s' % command)
+
+LowerCoatingLimit = SystemPosition(137,180,11,11,0,0,111,0)
+UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,177)
 
 def SoftLimit(pos):
     for property, value in vars(pos).items():
