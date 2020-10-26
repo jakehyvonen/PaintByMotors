@@ -6,8 +6,9 @@ from os.path import expanduser
 from PBMSupport import *
 
 #ToDo
-#map list of controller button events to sending string commands to mc
-#-
+#implement axis input filtering by time:
+#-loop that fetches axis input after a given delay
+#
 home = expanduser('~')
 savedir = home + '/SIEData/'
 

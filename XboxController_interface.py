@@ -5,6 +5,7 @@ from xbox360controller import Xbox360Controller
 from PBMSupport import SystemPosition
 from Events import Event
 
+
 class Xbox_Interface:
     def __init__(self,delay=1.1):
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
@@ -110,4 +111,4 @@ if __name__ == '__main__':
     while True:
         print('current_pos X: ' + str(xi.get_pos().X))
         print('current_pos Y: ' + str(xi.get_pos().Y))
-        time.sleep(1.1)
+        sleep(1.1)
