@@ -53,8 +53,20 @@ class Movement_Coordinator:
             self.cnc_ma.SetPosition(pos)
         self.current_pos = pos
 
-    def RelativePosition(self, diffpos):
-        newpos = self.current_pos
+    def RelativePosition(self, diffpos, delay=1.1):
+        oldpos = self.current_pos
+        m2 = self.current_pos.M2 + diffpos.M2
+        m3 = self.current_pos.M3 + diffpos.M3
+        m4 = self.current_pos.M4 + diffpos.M4
+        m5 = self.current_pos.M5 + diffpos.M5
+        x = self.current_pos.X + diffpos.X
+        y = self.current_pos.Y + diffpos.Y
+        z = self.current_pos.Z + diffpos.Z
+        e = self.current_pos.E + diffpos.E
+        newpos = SystemPosition(m2,m3,m4,m5,x,y,z,e)
+        if self.isEmulating:
+            time.sleep(delay)
+        '''
         newpos.M2 += diffpos.M2
         newpos.M3 += diffpos.M3
         newpos.M4 += diffpos.M4
@@ -62,10 +74,10 @@ class Movement_Coordinator:
         newpos.X += diffpos.X
         newpos.Y += diffpos.Y 
         newpos.Z += diffpos.Z
-        newpos.E += diffpos.E
+        newpos.E += diffpos.E'''
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))
-        if(PositionChanged(newpos, diffpos)):
+        if(PositionChanged(newpos, oldpos)):
             self.SetPosition(newpos)
 
     
@@ -130,6 +142,7 @@ class Movement_Coordinator:
         if(len(argv) == 0):
             argv = ['cnc','ra','syr']
         self.isBusy = False
+        self.isEmulating = emulating
         self.current_pos = SystemPosition()
         if('cnc' in argv):
             self.cnc_ma = c_m.CNCManager()

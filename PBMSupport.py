@@ -23,9 +23,11 @@ def PositionChanged(posA, posB):
         posA.M5 == posB.M5
         ):
         print('SystemPosition unchanged')
+        
         return False
     else:
         print('SystemPosition changed')
+
         return True
 
 def MakeDec(num,places = 2):
