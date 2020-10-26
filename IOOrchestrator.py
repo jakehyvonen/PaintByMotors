@@ -24,7 +24,7 @@ class IOOrchestrator:
         self.current_cnc_pos = CNCPosition(0,0,0,0)
         self.current_servo_pos = ServoPosition(0,0,0,0)
         self.mc = mover.Movement_Coordinator(
-            'cnc','ra','syr',emulating=True)
+            'cnc','ra','syr',isEmulating=True,isPainting=True)
     
     def Setup(self):
         print('Setup()')
@@ -115,9 +115,7 @@ class IOOrchestrator:
         elif(button.name == 'button_trigger_r'):
             isActive = False
         print('msg: %s' % msg)
-        self.mc.HandleCommand(msg)
-
-   
+        self.mc.HandleCommand(msg)   
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()

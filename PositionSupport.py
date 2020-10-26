@@ -125,16 +125,15 @@ def PositionSum(posA, posB):
         newPos = ServoPosition()
     for property, value in vars(posA).items():
         try:
-            #print('property: ' + property + ' valueA: ' + str(value))
+            print('property: ' + property + ' valueA: ' + str(value))
             posBval = getattr(posB,property)
-            #print('property: ' + property + ' valueB: ' + str(posBval))
+            print('property: ' + property + ' valueB: ' + str(posBval))
             newVal = value + posBval
             newPos.__setattr__(property,newVal)
         except:
-            #fucking error handling, how does it work?
             pass
-    #for property, value in vars(newPos).items():
-        #print('property change?: ' + property + ' value: ' + str(value))
+    for property, value in vars(newPos).items():
+        print('property change?: ' + property + ' value: ' + str(value))
     return newPos
 
 if __name__ == '__main__':
