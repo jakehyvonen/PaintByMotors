@@ -1,9 +1,10 @@
 import movement_coordinator as mover 
 from xbox360controller import controller
 import XboxController_interface as xbox 
-import time
+from time import sleep
 from os.path import expanduser
 from PBMSupport import *
+import threading
 
 #ToDo
 #implement axis input filtering by time:
@@ -11,15 +12,18 @@ from PBMSupport import *
 #
 home = expanduser('~')
 savedir = home + '/SIEData/'
+axisDelay = False
 
 class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
         self.xbox = xbox.Xbox_Interface()
+        self.delay = 1.1
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',emulating=True)
 
+    
     def Setup(self):
         print('Setup()')
 
@@ -35,8 +39,49 @@ class IOOrchestrator:
         self.xbox.button_release_event += self.HandleButtonRelease
         self.xbox.axis_moved_event += self.HandleAxisMove
 
-    def CNCCommand(self):
-        print('CNCCommand()')
+    #we want to filter the controller input to avoid overloading
+    #the MarlinCNC and RoboArm MCUs
+    def AxisDelay(self):
+        global axisDelay
+        axisDelay = True
+        sleep(self.delay)
+        axisDelay = False
+
+    def StartDelay(self):
+        th = threading.Thread(target=self.AxisDelay)
+        th.start()
+
+    def HandleAxisMove(self, axis):
+        global axisDelay
+        if axisDelay:
+            pass
+        else:
+            if(axis.name == 'axis_r'):
+                if(abs(axis.x) > 0.1):
+                    self.current_pos.X = MakeDec(axis.x)
+                else:
+                    self.current_pos.X = 0
+                if(abs(axis.y) > 0.1):
+                    self.current_pos.Y = MakeDec(axis.y)
+                else:
+                    self.current_pos.Y = 0
+                self.mc.RelativePosition(self.current_pos)
+                self.StartDelay()
+            if(axis.name == 'axis_l'):
+                if(axis.x > 0.1):
+                    self.current_pos.M4 = 1
+                elif(axis.x < -0.1):
+                    self.current_pos.M4 = -1
+                else:
+                    self.current_pos.M4 = 0
+                if(axis.y > 0.1):
+                    self.current_pos.M5 = 1
+                elif(axis.y < -0.1):
+                    self.current_pos.M5 = -1
+                else:
+                    self.current_pos.M5 = 0
+                self.mc.RelativePosition(self.current_pos)
+                self.StartDelay()
         
     def HandleButtonPress(self, button):
         msg = 'None'
@@ -68,31 +113,7 @@ class IOOrchestrator:
         print('msg: %s' % msg)
         self.mc.HandleCommand(msg)
 
-    def HandleAxisMove(self, axis):
-        if(axis.name == 'axis_r'):
-            if(abs(axis.x) > 0.1):
-                self.current_pos.X = MakeDec(axis.x)
-            else:
-                self.current_pos.X = 0
-            if(abs(axis.y) > 0.1):
-                self.current_pos.Y = MakeDec(axis.y)
-            else:
-                self.current_pos.Y = 0
-            self.mc.RelativePosition(self.current_pos)
-        if(axis.name == 'axis_l'):
-            if(axis.x > 0.1):
-                self.current_pos.M4 = 1
-            elif(axis.x < -0.1):
-                self.current_pos.M4 = -1
-            else:
-                self.current_pos.M4 = 0
-            if(axis.y > 0.1):
-                self.current_pos.M5 = 1
-            elif(axis.y < -0.1):
-                self.current_pos.M5 = -1
-            else:
-                self.current_pos.M5 = 0
-            self.mc.RelativePosition(self.current_pos)
+   
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()
