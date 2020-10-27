@@ -56,9 +56,18 @@ class IOOrchestrator:
             if row[0] < et:
                 print('et: ', str(et))
                 print('row[0]: ', str(row[0]))
-                print('row[1]: ', str(row[1]))
-                print('row[2]: ', str(row[2]))
-                print('row[3]: ', str(row[3]))
+                if row[1]:
+                    print('row[1]: ', str(row[1]))
+                    if not self.mc.isEmulating:
+                        self.mc.cnc_ma.SendCommand(row[1])
+                if row[2]:
+                    print('row[2]: ', str(row[2]))
+                    if not self.mc.isEmulating:
+                        self.mc.ra_ma.SendCommand(row[2])
+                if row[3]:
+                    print('row[3]: ', str(row[3]))
+                    if not self.mc.isEmulating:
+                        self.mc.syr_ma.SendCommand(row[3])
                 i += 1
 
     def StartRecordingXbox(self):
