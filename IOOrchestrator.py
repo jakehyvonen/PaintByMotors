@@ -37,13 +37,10 @@ class IOOrchestrator:
             self.mc.ra_ma.sent_command_event += self.RecordRACommand
         if self.mc.syr_ma:
             self.mc.syr_ma.sent_command_event += self.RecordSYRCommand
-        self.ActionsDict = {}
-    
-    def SetupRunDBRecorder(self):
-        print('SetupRecorder()')
+        self.ActionsDict = {}    
 
     def FetchRuns(self):
-        print('GetRuns()')
+        print('FetchRuns()')
 
     def ReRunRun(self):
         print('ReRunRun()')
@@ -88,6 +85,7 @@ class IOOrchestrator:
             #print('Waiting on AxisDelay')
             pass
         else:
+            #CNC AXIS
             if(axis.name == 'axis_r'):
                 if(abs(axis.x) > 0.1):
                     self.current_cnc_pos.X = MakeDec(axis.x)                    
@@ -104,6 +102,7 @@ class IOOrchestrator:
                 self.current_cnc_pos.X = 0
                 self.current_cnc_pos.Y = 0
                 self.StartDelay()
+            #SERVO AXIS
             if(axis.name == 'axis_l'):
                 if(axis.x > 0.1):
                     self.current_servo_pos.M4 = 1

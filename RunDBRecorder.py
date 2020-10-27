@@ -69,7 +69,9 @@ class RunDBRecorder:
 
     def StopRun(self):
         if self.isRecording:
-            self.isRecording = False        
+            self.isRecording = False 
+
+    
 
     def FetchRunData(self, runId = None, runName = None):
         print('FetchRun() runId: %s runName: %s' % (str(runId), str(runName)))
@@ -84,6 +86,20 @@ class RunDBRecorder:
             print('ra_comm: ', row[2])
             print('syr_comm: ', row[3])
         return commands
+
+    def FetchRuns(self):
+        conn = sql.connect(self.dbpath)
+        cursor = conn.cursor()
+        cursor.execute('''SELECT command_run_id, run_name, Count(*) 
+        FROM Commands c 
+        INNER JOIN Runs r ON r.run_id = c.command_run_id
+        GROUP BY command_run_id''')        
+        runs = cursor.fetchall()
+        for row in runs:
+            print('command_run_id: ', row[0],
+            '\trun_name: ', row[1],
+            '\tcommand_count: ', row[2])
+        return runs
 
     def DummyRun(self):
         i=1111
@@ -117,7 +133,8 @@ def RandomStr():
 
 if __name__ == '__main__':  
     rec = RunDBRecorder()
-    rec.StartRun(shouldBdum=True)
+    rec.FetchRuns()
+    #rec.StartRun(shouldBdum=True)
     while True:
         var = input('Please enter a runId: ')
         print('Entered: ' + var)
