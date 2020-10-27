@@ -113,7 +113,7 @@ def RandomStr():
 
 if __name__ == '__main__':  
     rec = RunDBRecorder()
-    #rec.StartRun(shouldBdum=True)
+    rec.StartRun(shouldBdum=True)
     while True:
         var = input('Please enter a runId: ')
         print('Entered: ' + var)

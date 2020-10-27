@@ -19,6 +19,7 @@ class CNCManager(DeviceManagerBase):
         if CNCPositionChanged(pos,self.lastpos):
             com = 'G1 X'+str(pos.X)+' Y'+str(pos.Y)+' Z'+str(pos.Z)+' E'+str(pos.E)
             self.SendCommand(com)
+            self.lastpos = pos
 
     def SetInitialState(self):
         self.WaitForResponse('SD card')

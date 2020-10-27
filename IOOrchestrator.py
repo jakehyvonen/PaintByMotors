@@ -6,6 +6,7 @@ from os.path import expanduser
 from PositionSupport import *
 from PBMSupport import *
 import threading
+from RunDBRecorder import *
 
 #ToDo
 #implement axis input filtering by time:
@@ -18,6 +19,7 @@ axisDelay = False
 class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         self.dbpath = savedir+dbname
+        self.dbrecord = RunDBRecorder(self.dbpath)
         self.xbox = xbox.Xbox_Interface()
         self.delay = 0.1
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
@@ -40,6 +42,34 @@ class IOOrchestrator:
         self.xbox.button_press_event += self.HandleButtonPress
         self.xbox.button_release_event += self.HandleButtonRelease
         self.xbox.axis_moved_event += self.HandleAxisMove
+        if self.mc.cnc_ma:
+            self.mc.cnc_ma.sent_command_event += self.RecordCNCCommand
+        if self.mc.ra_ma:
+            self.mc.ra_ma.sent_command_event += self.RecordRACommand
+        if self.mc.syr_ma:
+            self.mc.syr_ma.sent_command_event += self.RecordSYRCommand
+        self.dbrecord.StartRun()
+
+    def StopRecordingXbox(self):
+        print('StopRecordingXbox()')
+        self.xbox.button_press_event -= self.HandleButtonPress
+        self.xbox.button_release_event -= self.HandleButtonRelease
+        self.xbox.axis_moved_event -= self.HandleAxisMove
+        if self.mc.cnc_ma:
+            self.mc.cnc_ma.sent_command_event -= self.RecordCNCCommand
+        if self.mc.ra_ma:
+            self.mc.ra_ma.sent_command_event -= self.RecordRACommand
+        if self.mc.syr_ma:
+            self.mc.syr_ma.sent_command_event -= self.RecordSYRCommand
+
+    def RecordCNCCommand(self, com):
+        self.dbrecord.AddCommandData(cnc=com)
+
+    def RecordRACommand(self, com):
+        self.dbrecord.AddCommandData(ra=com)
+
+    def RecordSYRCommand(self, com):
+        self.dbrecord.AddCommandData(syr=com)
 
     #we want to filter the controller input to avoid overloading
     #the MarlinCNC and RoboArm MCUs
@@ -98,7 +128,7 @@ class IOOrchestrator:
         elif(button.name == 'button_a'):
             msg = 'Run,2'
         elif(button.name == 'button_trigger_r'):
-            isActive = False
+            self.StopRecordingXbox()
         print('msg: %s' % msg)
         self.mc.HandleCommand(msg)
 
