@@ -69,9 +69,7 @@ class RunDBRecorder:
 
     def StopRun(self):
         if self.isRecording:
-            self.isRecording = False 
-
-    
+            self.isRecording = False     
 
     def FetchRunData(self, runId = None, runName = None):
         print('FetchRun() runId: %s runName: %s' % (str(runId), str(runName)))
@@ -81,6 +79,7 @@ class RunDBRecorder:
         FROM Commands WHERE command_run_id = ?''',(runId,))
         commands = cursor.fetchall()
         for row in commands:
+            print('type: ' + str(type(row)))
             print('timepoint: ', row[0])
             print('cnc_comm: ', row[1])
             print('ra_comm: ', row[2])

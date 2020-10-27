@@ -41,9 +41,25 @@ class IOOrchestrator:
 
     def FetchRuns(self):
         print('FetchRuns()')
+        runs = self.dbrecord.FetchRuns()
+        #at some point we'll be more sophisticated than CLI?
 
-    def ReRunRun(self):
+    def ReRunRun(self, runId):
         print('ReRunRun()')
+        rrcomms = self.dbrecord.FetchRunData(runId=runId)
+        st = time.perf_counter()
+        i=0
+        while i < len(rrcomms):
+            t = time.perf_counter()
+            et = t - st
+            row = rrcomms[i]
+            if row[0] < et:
+                print('et: ', str(et))
+                print('row[0]: ', str(row[0]))
+                print('row[1]: ', str(row[1]))
+                print('row[2]: ', str(row[2]))
+                print('row[3]: ', str(row[3]))
+                i += 1
 
     def StartRecordingXbox(self):
         print('RecordXbox()')             
@@ -164,9 +180,10 @@ if __name__ == '__main__':
     orc = IOOrchestrator()
     #orc.StartRecordingXbox()
     while True:
+        orc.FetchRuns()
         var = input('Please enter a command: ')
         print('Entered: ' + var)
-        orc.HandleTerminalInput(var)
+        orc.ReRunRun(var)
 '''
      ;)
         while True:
