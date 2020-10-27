@@ -20,6 +20,11 @@ class RoboArmManager(DeviceManagerBase):
         print('get response: ' + self.ser.readline().decode().rstrip()) 
         return p   
 
+    def SendCommand(self, com):
+        super().SendCommand(com)
+        if not self.emulator_mode:
+            super().WaitForResponse()
+
     def SetPosition(self, com, pos):
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))

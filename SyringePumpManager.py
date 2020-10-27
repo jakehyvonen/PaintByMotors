@@ -69,8 +69,7 @@ class SyringePumpManager(DeviceManagerBase):
                 return response
         else:
             print('Serial closed. Attempting to open')
-            '''
-           
+            '''           
 
     def DoAction(self, com):
         print('DoAction(): '+ com)

@@ -72,6 +72,7 @@ void loop() {
       M5 = parseString.toInt();
       //Serial.print(" M5: " + String(M5));
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+      serial.println('ok')
     }
     else if(command.substring(0,4)=="open")
     {
@@ -79,16 +80,19 @@ void loop() {
       //M1 = parseString.toInt();
       M1 = 77;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
+      serial.println('ok')
     }
     else if(command.substring(0,5)=="rinse")
     {
       M1 = 160;
-      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6); 
+      serial.println('ok')
     }
     else if(command.substring(0,5)=="close")
     {
       M1 = 163;
-      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+      Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
+      serial.println('ok')
     }
     else
     {
