@@ -53,17 +53,53 @@ class RunDBRecorder:
         cursor.execute('INSERT INTO Commands VALUES (?,?,?,?,?,?)',values)
         conn.commit()
 
-    def StartRun(self, runId=None, isFresh = True):
+    def StartRun(self, runId=None, isFresh = True, shouldBdum = False):
         print('StartRun()')
         if isFresh:
             self.CreateNewRun()
         self.startTime = time.clock()
+        if shouldBdum:
+            self.DummyRun()
         #while(self.isRecording):
             #is it necessary to do anything?
 
     def StopRun(self):
         if self.isRecording:
             self.isRecording = False        
+
+    def FetchRun(self, runId = None, runName = None):
+        print('FetchRun() runId: %s runName: %s' % (str(runId), str(runName)))
+        conn = sql.connect(self.dbpath)
+        cursor = conn.cursor()
+        cursor.execute('''SELECT timepoint, cnc_comm, ra_comm, syr_comm 
+        FROM Commands WHERE command_run_id = ?''',(runId,))
+        commands = cursor.fetchall()
+        for row in commands:
+            print('timepoint: ', row[0])
+            print('cnc_comm: ', row[1])
+            print('ra_comm: ', row[2])
+            print('syr_comm: ', row[3])
+        return commands
+
+    def DummyRun(self):
+        i=1111
+        while(i>0):
+            thing = i%3
+            cnc = None
+            ra = None
+            syr = None
+            if thing == 0:
+                cnc = RandomStr()
+            elif thing == 1:
+                ra = RandomStr()
+            elif thing == 2:
+                syr = RandomStr()
+            self.AddCommandData(
+                cnc=cnc,
+                ra=ra,
+                syr=syr
+                )
+            i-=1
 
 def RandomStr():
     MAX_LIMIT = 111    
@@ -72,17 +108,15 @@ def RandomStr():
         random_integer = random.randint(101, MAX_LIMIT)
         # Keep appending random characters using chr(x)
         random_string += (chr(random_integer))    
-    #print('random_string: ' + random_string)
+    print('random_string: ' + random_string)
     return random_string
 
 if __name__ == '__main__':  
     rec = RunDBRecorder()
-    rec.CreateNewRun()
-    i=1111
-    while(i>0):
-        rec.AddCommandData(
-            cnc=RandomStr(),
-            ra=RandomStr(),
-            syr=RandomStr()
-            )
-        i-=1
+    #rec.StartRun(shouldBdum=True)
+    while True:
+        var = input('Please enter a runId: ')
+        print('Entered: ' + var)
+        rec.FetchRun(var)
+
+   
