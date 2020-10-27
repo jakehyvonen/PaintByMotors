@@ -99,7 +99,7 @@ def CNCPositionChanged(posA, posB):
         posA.Z == posB.Z and
         posA.E == posB.E        
         ):
-        print('CNCPosition unchanged')        
+        #print('CNCPosition unchanged')        
         return False
     else:
         print('CNCPosition changed')
@@ -112,10 +112,11 @@ def ServoPositionChanged(posA, posB):
         posA.M4 == posB.M4 and
         posA.M5 == posB.M5
         ):
-        print('ServoPosition unchanged')        
+        #print('ServoPosition unchanged')        
         return False
     else:
         print('ServoPosition changed')
+        
         return True
 
 def PositionSum(posA, posB):
@@ -125,15 +126,15 @@ def PositionSum(posA, posB):
         newPos = ServoPosition()
     for property, value in vars(posA).items():
         try:
-            print('property: ' + property + ' valueA: ' + str(value))
+            #print('property: ' + property + ' valueA: ' + str(value))
             posBval = getattr(posB,property)
-            print('property: ' + property + ' valueB: ' + str(posBval))
+            #print('property: ' + property + ' valueB: ' + str(posBval))
             newVal = value + posBval
             newPos.__setattr__(property,newVal)
         except:
             pass
-    for property, value in vars(newPos).items():
-        print('property change?: ' + property + ' value: ' + str(value))
+    #for property, value in vars(newPos).items():
+        #print('property change?: ' + property + ' value: ' + str(value))
     return newPos
 
 if __name__ == '__main__':

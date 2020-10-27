@@ -42,22 +42,26 @@ class RunDBRecorder:
         self.activeRunId = rows + 1
 
     def AddCommandData(self, runId=None, time = None, cnc=None, ra=None, syr=None):
-        if not runId:
-            runId = self.activeRunId
-        if not time:
-            time = self.ElapsedTime()
-        print('runId: ' + str(runId))
-        conn = sql.connect(self.dbpath)
-        cursor = conn.cursor()
-        values = (None,time,cnc,ra,syr,runId)
-        cursor.execute('INSERT INTO Commands VALUES (?,?,?,?,?,?)',values)
-        conn.commit()
+        if self.isRecording:
+            if not runId:
+                runId = self.activeRunId
+            if not time:
+                time = self.ElapsedTime()
+            print('runId: ' + str(runId))
+            conn = sql.connect(self.dbpath)
+            cursor = conn.cursor()
+            values = (None,time,cnc,ra,syr,runId)
+            cursor.execute('INSERT INTO Commands VALUES (?,?,?,?,?,?)',values)
+            conn.commit()
+        else:
+            print('We are not recording anything!!!!!!!!!!!!!!')
 
     def StartRun(self, runId=None, isFresh = True, shouldBdum = False):
         print('StartRun()')
         if isFresh:
             self.CreateNewRun()
         self.startTime = time.clock()
+        self.isRecording = True
         if shouldBdum:
             self.DummyRun()
         #while(self.isRecording):

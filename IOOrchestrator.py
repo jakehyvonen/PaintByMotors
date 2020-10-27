@@ -18,8 +18,8 @@ axisDelay = False
 
 class IOOrchestrator:
     def __init__(self,dbname='test.db'):
-        self.dbpath = savedir+dbname
-        self.dbrecord = RunDBRecorder(self.dbpath)
+        #self.dbpath = savedir+dbname
+        self.dbrecord = RunDBRecorder(dbname)
         self.xbox = xbox.Xbox_Interface()
         self.delay = 0.1
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
@@ -51,16 +51,7 @@ class IOOrchestrator:
         self.dbrecord.StartRun()
 
     def StopRecordingXbox(self):
-        print('StopRecordingXbox()')
-        self.xbox.button_press_event -= self.HandleButtonPress
-        self.xbox.button_release_event -= self.HandleButtonRelease
-        self.xbox.axis_moved_event -= self.HandleAxisMove
-        if self.mc.cnc_ma:
-            self.mc.cnc_ma.sent_command_event -= self.RecordCNCCommand
-        if self.mc.ra_ma:
-            self.mc.ra_ma.sent_command_event -= self.RecordRACommand
-        if self.mc.syr_ma:
-            self.mc.syr_ma.sent_command_event -= self.RecordSYRCommand
+        self.dbrecord.StopRun()
 
     def RecordCNCCommand(self, com):
         self.dbrecord.AddCommandData(cnc=com)
@@ -86,6 +77,7 @@ class IOOrchestrator:
     def HandleAxisMove(self, axis):
         global axisDelay
         if axisDelay:
+            print('Waiting on AxisDelay')
             pass
         else:
             if(axis.name == 'axis_r'):
@@ -118,7 +110,7 @@ class IOOrchestrator:
                 self.StartDelay()
         
     def HandleButtonPress(self, button):
-        msg = 'None'
+        msg = None
         if(button.name == 'button_trigger_l'):
             msg = 'Swap'
         elif(button.name == 'button_y'):
@@ -129,11 +121,12 @@ class IOOrchestrator:
             msg = 'Run,2'
         elif(button.name == 'button_trigger_r'):
             self.StopRecordingXbox()
-        print('msg: %s' % msg)
-        self.mc.HandleCommand(msg)
+        if msg:
+            print('msg: %s' % msg)
+            self.mc.HandleCommand(msg)
 
     def HandleButtonRelease(self, button):
-        msg = 'None'
+        msg = None
         if(button.name == 'button_trigger_l'):
             msg = 'None'
         elif(button.name == 'button_y'):
@@ -144,8 +137,9 @@ class IOOrchestrator:
             msg = 'Stop,2'
         elif(button.name == 'button_trigger_r'):
             isActive = False
-        print('msg: %s' % msg)
-        self.mc.HandleCommand(msg)   
+        if msg:
+            print('msg: %s' % msg)
+            self.mc.HandleCommand(msg)   
 
 if __name__ == '__main__':  
     orc = IOOrchestrator()
