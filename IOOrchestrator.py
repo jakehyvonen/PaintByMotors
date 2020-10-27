@@ -28,22 +28,6 @@ class IOOrchestrator:
         self.current_servo_pos = ServoPosition(0,0,0,0)
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',isEmulating=True,isPainting=True)
-    
-    def SetupRunDBRecorder(self):
-        print('SetupRecorder()')
-        
-
-    def StartRunDBRecorder(self):
-        print('StartRunDBRecorder')
-
-    def GetRuns(self):
-        print('GetRuns()')
-
-    def ReRunRun(self):
-        print('ReRunRun()')
-
-    def RecordXbox(self):
-        print('RecordXbox()')     
         self.xbox.button_press_event += self.HandleButtonPress
         self.xbox.button_release_event += self.HandleButtonRelease
         self.xbox.axis_moved_event += self.HandleAxisMove
@@ -53,19 +37,38 @@ class IOOrchestrator:
             self.mc.ra_ma.sent_command_event += self.RecordRACommand
         if self.mc.syr_ma:
             self.mc.syr_ma.sent_command_event += self.RecordSYRCommand
+        self.ActionsDict = {}
+    
+    def SetupRunDBRecorder(self):
+        print('SetupRecorder()')
+
+    def FetchRuns(self):
+        print('GetRuns()')
+
+    def ReRunRun(self):
+        print('ReRunRun()')
+
+    def StartRecordingXbox(self):
+        print('RecordXbox()')             
         self.dbrecord.StartRun()
 
     def StopRecordingXbox(self):
-        self.dbrecord.StopRun()
+        if self.dbrecord.isRecording:
+            self.dbrecord.StopRun()
+        else:
+            print('already stopped recording, geeeeze')
 
     def RecordCNCCommand(self, com):
-        self.dbrecord.AddCommandData(cnc=com)
+        if self.dbrecord.isRecording:
+            self.dbrecord.AddCommandData(cnc=com)
 
     def RecordRACommand(self, com):
-        self.dbrecord.AddCommandData(ra=com)
+        if self.dbrecord.isRecording:
+            self.dbrecord.AddCommandData(ra=com)
 
     def RecordSYRCommand(self, com):
-        self.dbrecord.AddCommandData(syr=com)
+        if self.dbrecord.isRecording:
+            self.dbrecord.AddCommandData(syr=com)
 
     #we want to filter the controller input to avoid overloading
     #the MarlinCNC and RoboArm MCUs
@@ -82,12 +85,12 @@ class IOOrchestrator:
     def HandleAxisMove(self, axis):
         global axisDelay
         if axisDelay:
-            print('Waiting on AxisDelay')
+            #print('Waiting on AxisDelay')
             pass
         else:
             if(axis.name == 'axis_r'):
                 if(abs(axis.x) > 0.1):
-                    self.current_cnc_pos.X = MakeDec(axis.x)
+                    self.current_cnc_pos.X = MakeDec(axis.x)                    
                 else:
                     self.current_cnc_pos.X = 0
                 if(abs(axis.y) > 0.1):
@@ -96,6 +99,10 @@ class IOOrchestrator:
                     self.current_cnc_pos.Y = 0
                 self.current_pos.CNC = self.current_cnc_pos
                 self.mc.RelativePosition(self.current_pos)
+                #reset positions after sending to avoid  
+                #changing the position with other axis input
+                self.current_cnc_pos.X = 0
+                self.current_cnc_pos.Y = 0
                 self.StartDelay()
             if(axis.name == 'axis_l'):
                 if(axis.x > 0.1):
@@ -112,6 +119,10 @@ class IOOrchestrator:
                     self.current_servo_pos.M5 = 0
                 self.current_pos.Servo = self.current_servo_pos
                 self.mc.RelativePosition(self.current_pos)
+                #reset positions after sending to avoid  
+                #changing the position with other axis input
+                self.current_servo_pos.X = 0
+                self.current_servo_pos.Y = 0
                 self.StartDelay()
         
     def HandleButtonPress(self, button):
@@ -126,30 +137,39 @@ class IOOrchestrator:
             msg = 'Run,2'
         elif(button.name == 'button_trigger_r'):
             self.StopRecordingXbox()
+        elif(button.name == 'button_x'):
+            self.StartRecordingXbox()
         if msg:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)
 
     def HandleButtonRelease(self, button):
         msg = None
-        if(button.name == 'button_trigger_l'):
-            msg = 'None'
-        elif(button.name == 'button_y'):
+        if(button.name == 'button_y'):
             msg = 'Stop,0'
         elif(button.name == 'button_b'):
             msg = 'Stop,1'
         elif(button.name == 'button_a'):
             msg = 'Stop,2'
-        elif(button.name == 'button_trigger_r'):
-            isActive = False
         if msg:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)   
 
+    def HandleTerminalInput(self, var):
+        if(var in self.ActionsDict.keys()):
+            self.ActionsDict[var]()
+        else:
+            print('unrecognized action')
+
 if __name__ == '__main__':  
     orc = IOOrchestrator()
-    orc.RecordXbox()
-    ''' ;)
+    #orc.StartRecordingXbox()
+    while True:
+        var = input('Please enter a command: ')
+        print('Entered: ' + var)
+        orc.HandleTerminalInput(var)
+'''
+     ;)
         while True:
             x = self.xbox.get_pos().X
             y = self.xbox.get_pos().Y

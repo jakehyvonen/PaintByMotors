@@ -71,7 +71,7 @@ class RunDBRecorder:
         if self.isRecording:
             self.isRecording = False        
 
-    def FetchRun(self, runId = None, runName = None):
+    def FetchRunData(self, runId = None, runName = None):
         print('FetchRun() runId: %s runName: %s' % (str(runId), str(runName)))
         conn = sql.connect(self.dbpath)
         cursor = conn.cursor()
@@ -121,6 +121,6 @@ if __name__ == '__main__':
     while True:
         var = input('Please enter a runId: ')
         print('Entered: ' + var)
-        rec.FetchRun(var)
+        rec.FetchRunData(var)
 
    
