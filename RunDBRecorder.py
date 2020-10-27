@@ -18,10 +18,10 @@ class RunDBRecorder:
         self.dbpath = savedir + dbname
         self.activeRunId = 0
         self.isRecording = False
-        self.startTime = time.clock()
+        self.startTime = time.perf_counter()
 
     def ElapsedTime(self):
-        return round((time.clock() - self.startTime),3)
+        return round((time.perf_counter() - self.startTime),3)
        
     def CreateNewRun(self, runName=None):
         conn = sql.connect(self.dbpath)
@@ -60,7 +60,7 @@ class RunDBRecorder:
         print('StartRun()')
         if isFresh:
             self.CreateNewRun()
-        self.startTime = time.clock()
+        self.startTime = time.perf_counter()
         self.isRecording = True
         if shouldBdum:
             self.DummyRun()

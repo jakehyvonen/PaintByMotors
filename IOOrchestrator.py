@@ -19,6 +19,7 @@ axisDelay = False
 class IOOrchestrator:
     def __init__(self,dbname='test.db'):
         #self.dbpath = savedir+dbname
+        self.dbname = dbname
         self.dbrecord = RunDBRecorder(dbname)
         self.xbox = xbox.Xbox_Interface()
         self.delay = 0.1
@@ -28,8 +29,12 @@ class IOOrchestrator:
         self.mc = mover.Movement_Coordinator(
             'cnc','ra','syr',isEmulating=True,isPainting=True)
     
-    def Setup(self):
-        print('Setup()')
+    def SetupRunDBRecorder(self):
+        print('SetupRecorder()')
+        
+
+    def StartRunDBRecorder(self):
+        print('StartRunDBRecorder')
 
     def GetRuns(self):
         print('GetRuns()')
