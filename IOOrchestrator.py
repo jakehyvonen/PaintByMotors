@@ -98,7 +98,7 @@ class IOOrchestrator:
                 else:
                     self.current_cnc_pos.Y = 0
                 self.current_pos.CNC = self.current_cnc_pos
-                self.mc.RelativePosition(self.current_pos)
+                self.mc.RelativeCNCPosition(self.current_cnc_pos)
                 #reset positions after sending to avoid  
                 #changing the position with other axis input
                 self.current_cnc_pos.X = 0
@@ -118,7 +118,7 @@ class IOOrchestrator:
                 else:
                     self.current_servo_pos.M5 = 0
                 self.current_pos.Servo = self.current_servo_pos
-                self.mc.RelativePosition(self.current_pos)
+                self.mc.RelativeServoPosition(self.current_servo_pos)
                 #reset positions after sending to avoid  
                 #changing the position with other axis input
                 self.current_servo_pos.X = 0

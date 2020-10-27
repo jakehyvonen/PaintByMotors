@@ -43,6 +43,20 @@ class Movement_Coordinator:
             self.ra_ma.SetPosition('set',pos)
             self.current_pos.Servo = pos.Servo
 
+    def RelativeCNCPosition(self, diffpos):
+        oldpos = self.current_pos.CNC
+        sumpos = PositionSum(diffpos, oldpos)
+        if CNCPositionChanged(oldpos, sumpos):
+            c = SystemPosition(cnc=sumpos)
+            self.SetPosition(c)
+
+    def RelativeServoPosition(self, diffpos):
+        oldpos = self.current_pos.Servo
+        sumpos = PositionSum(diffpos, oldpos)
+        if ServoPositionChanged(oldpos, sumpos):
+            p = SystemPosition(servo=sumpos)
+            self.SetPosition(p)
+
     def RelativePosition(self, diffpos):
         oldpos = self.current_pos
         cnc = None
