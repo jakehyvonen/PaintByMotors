@@ -14,16 +14,22 @@ class RoboArmManager(DeviceManagerBase):
 
     def ConnectToDevice(self,ports = sc.serial_ports()):
         p = super().ConnectToDevice(defPort='/dev/ttyACM0',
-        ports=ports, trycount=11)
-        self.ser.timeout = 11
-        self.ser.write(b'get')
-        print('get response: ' + self.ser.readline().decode().rstrip()) 
+        ports=ports, trycount=11, baud=9600, retmsg='ok')
+        #self.ser.timeout = 11
+        #self.SendCommand('ping')
+        #self.ser.write(b'get')
+        #print('get response: ' + self.ser.readline().decode().rstrip()) 
+        self.ser.readlines()
+        self.ser.flushInput()
         return p   
 
     def SendCommand(self, com):
         super().SendCommand(com)
         if not self.emulator_mode:
             super().WaitForResponse()
+            #self.ser.readlines()
+            self.ser.flushInput()
+
 
     def SetPosition(self, com, pos):
         #for property, value in vars(newpos).items():

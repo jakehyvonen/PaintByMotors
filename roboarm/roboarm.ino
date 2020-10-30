@@ -23,6 +23,7 @@ void setup() {
   //Serial.println("not sure if I'm sane");
   Braccio.begin();//-999 == Braccio.SOFT_START_DISABLED
   //Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
+  Serial.println("ok");
 }
 
 void loop() {
@@ -72,7 +73,7 @@ void loop() {
       M5 = parseString.toInt();
       //Serial.print(" M5: " + String(M5));
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);  
-      serial.println('ok')
+      Serial.println("ok");
     }
     else if(command.substring(0,4)=="open")
     {
@@ -80,25 +81,26 @@ void loop() {
       //M1 = parseString.toInt();
       M1 = 77;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
-      serial.println('ok')
+      Serial.println("ok");
     }
     else if(command.substring(0,5)=="rinse")
     {
       M1 = 160;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6); 
-      serial.println('ok')
+      Serial.println("ok");
     }
     else if(command.substring(0,5)=="close")
     {
       M1 = 163;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
-      serial.println('ok')
+      Serial.println("ok");
     }
     else
     {
       Serial.println("Unrecognized command. Please check roboarm.ino for reference");
     }   
-  }
+  }  
+  //Serial.println("ok");
 }
 
 int readSerialInputCommand(String *command)

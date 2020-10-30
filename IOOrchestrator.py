@@ -9,8 +9,8 @@ import threading
 from RunDBRecorder import *
 
 #ToDo
-#implement axis input filtering by time:
-#-loop that fetches axis input after a given delay
+#only close nozzle cap when ALL pumps are off
+#(present case will cause problems when multiple pumps are running)
 #
 home = expanduser('~')
 savedir = home + '/SIEData/'
@@ -27,7 +27,10 @@ class IOOrchestrator:
         self.current_cnc_pos = CNCPosition(0,0,0,0)
         self.current_servo_pos = ServoPosition(0,0,0,0)
         self.mc = mover.Movement_Coordinator(
-            'cnc','ra','syr',isEmulating=True,isPainting=True)
+            #'cnc',
+            'ra',
+            'syr',
+            isEmulating=False,isPainting=False)
         self.xbox.button_press_event += self.HandleButtonPress
         self.xbox.button_release_event += self.HandleButtonRelease
         self.xbox.axis_moved_event += self.HandleAxisMove
@@ -68,7 +71,8 @@ class IOOrchestrator:
                 i += 1
 
     def StartRecordingXbox(self):
-        print('RecordXbox()')             
+        print('RecordXbox()')      
+        self.mc.HandleCommand('Painting')       
         self.dbrecord.StartRun()
 
     def StopRecordingXbox(self):
@@ -152,10 +156,13 @@ class IOOrchestrator:
             msg = 'Swap'
         elif(button.name == 'button_y'):
             msg = 'Run,0'
+            self.mc.ra_ma.SendCommand("open")
         elif(button.name == 'button_b'):
             msg = 'Run,1'
+            self.mc.ra_ma.SendCommand("open")
         elif(button.name == 'button_a'):
             msg = 'Run,2'
+            self.mc.ra_ma.SendCommand("open")
         elif(button.name == 'button_trigger_r'):
             self.StopRecordingXbox()
         elif(button.name == 'button_x'):
@@ -175,6 +182,8 @@ class IOOrchestrator:
         if msg:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)   
+            #close the nozzle cap when not in use
+            self.mc.ra_ma.SendCommand('close')
 
     def HandleTerminalInput(self, var):
         if(var in self.ActionsDict.keys()):

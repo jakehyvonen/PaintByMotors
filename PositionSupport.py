@@ -74,11 +74,14 @@ UnloadB = SystemPosition(cnc=CNCPosition(39,0,342,0),
                 servo=ServoPosition(171,71,180,90))#
 UnloadC = SystemPosition(cnc=CNCPosition(39,0,342,-322),
                 servo=ServoPosition(171,71,180,90))#
+Painting = SystemPosition(cnc=CNCPosition(29,11,262,0),
+                servo=ServoPosition(137,180,33,90))#
 
 PositionsDict = {
     'NeutralA':NeutralA,'NeutralB':NeutralB, 
     'LoadA': LoadA, 'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,
-    'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC}
+    'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC,
+    'Painting':Painting}
 
 def PositionChanged(posA, posB):
     cncChanged = False
