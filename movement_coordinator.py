@@ -18,7 +18,7 @@ class Movement_Coordinator:
             print('removing port: ' + str(portToRemove))
             ports.remove(portToRemove)
             self.cnc_ma.SetInitialState()
-            self.cnc_ma.SetPosition(self.PositionsDict['NeutralB'])
+            self.cnc_ma.SetPosition(PositionsDict['NeutralB'])
         if(self.ra_ma):
             portToRemove = self.ra_ma.ConnectToDevice(ports)
             print('removing port: ' + str(portToRemove))
@@ -27,6 +27,7 @@ class Movement_Coordinator:
             self.syr_ma.Setup(ports)
         if(self.cnc_ma):
             time.sleep(1.1)
+            #do this twice to position robo arm?
             self.SetPosition(PositionsDict['NeutralB'])
             time.sleep(1.1)
             self.SetPosition(PositionsDict['NeutralA'])
@@ -107,7 +108,6 @@ class Movement_Coordinator:
         self.isPainting = True
         self.SetPosition(PositionsDict['Painting'])
 
-
     def RunPump(self, addr):
         addr = int(addr)
         pump = self.syr_ma.Pumps[addr]
@@ -127,8 +127,8 @@ class Movement_Coordinator:
             data = l[1]
         if('echo' in var or 'get' in var or 'set' in var):
             self.ra_ma.SendCommand(var)
-        elif(var in self.PositionsDict.keys()):
-            self.SetPosition(self.PositionsDict[var])
+        elif(var in PositionsDict.keys()):
+            self.SetPosition(PositionsDict[var])
         elif(var in self.ActionsDict.keys()):
             if(data):
                 self.ActionsDict[var](data)
@@ -206,8 +206,8 @@ if __name__ == '__main__':
     #SoftLimit(LoadA)
     mc = Movement_Coordinator(
     'cnc',
-    'ra',
-    'syr',
+    #'ra',
+    #'syr',
     isEmulating=False
     )  
     while True:

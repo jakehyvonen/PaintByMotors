@@ -9,8 +9,7 @@ import threading
 from RunDBRecorder import *
 
 #ToDo
-#only close nozzle cap when ALL pumps are off
-#(present case will cause problems when multiple pumps are running)
+#
 #
 home = expanduser('~')
 savedir = home + '/SIEData/'
@@ -27,7 +26,7 @@ class IOOrchestrator:
         self.current_cnc_pos = CNCPosition(0,0,0,0)
         self.current_servo_pos = ServoPosition(0,0,0,0)
         self.mc = mover.Movement_Coordinator(
-            #'cnc',
+            'cnc',
             'ra',
             'syr',
             isEmulating=False,isPainting=False)

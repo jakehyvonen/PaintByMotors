@@ -43,7 +43,7 @@ class DeviceManagerBase():
         DeviceNotBusy = False
         while(DeviceNotBusy != True):
             ret = self.ser.readline().decode().rstrip()
-            print(ret)
+            print('WaitForResponse: ', ret)
             if(response in ret):
                 DeviceNotBusy = True
                 print("got the response: " + response)
@@ -55,9 +55,10 @@ class DeviceManagerBase():
             command = str(com)+term
             self.ser.write(command.encode())
             if waitMsg:
+                print('waitMsg: ',waitMsg)
                 self.WaitForResponse()            
                 #workaround to trigger busy:processing response from Marlin
-                if waitMsg == 'M84\n'
+                if waitMsg == 'M84\n':
                     self.ser.write(waitMsg.encode())
                     self.WaitForResponse()
         else:
