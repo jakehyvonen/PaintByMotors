@@ -23,15 +23,12 @@ class RoboArmManager(DeviceManagerBase):
         self.ser.flushInput()
         return p   
 
-    def SendCommand(self, com):
-        super().SendCommand(com)
-        if not self.emulator_mode:
-            super().WaitForResponse()
-            #self.ser.readlines()
-            self.ser.flushInput()
+    def SendCommand(self, com, msg = 'ok'):
+        super().SendCommand(com, waitMsg=msg)
+        self.ser.flushInput()
 
 
-    def SetPosition(self, com, pos):
+    def SetPosition(self, com, pos, msg = 'ok'):
         #for property, value in vars(newpos).items():
         #    print('newpos property: ' + str(property) + ' value: ' + str(value))
         if(ServoPositionChanged(pos, self.lastpos)):
@@ -64,7 +61,7 @@ class RoboArmManager(DeviceManagerBase):
             if('set' in com or 'echo' in com):
                 command = com+m2+m3+m4+m5
                 print('command: ' + command)
-                self.SendCommand(command)
+                self.SendCommand(command, msg)
             else:
                 print('Tried to set pos with invalid command')
             self.lastpos = pos

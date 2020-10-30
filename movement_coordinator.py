@@ -35,12 +35,16 @@ class Movement_Coordinator:
         if self.cnc_ma and pos.CNC:
             if self.isPainting:
                 SoftLimit(pos.CNC)
-            self.cnc_ma.SetPosition(pos)
+                self.cnc_ma.SetPosition(pos,msg=None)
+            else:
+                self.cnc_ma.SetPosition(pos)
             self.current_pos.CNC = pos.CNC
         if self.ra_ma and pos.Servo:
             if self.isPainting:
                 SoftLimit(pos.Servo)
-            self.ra_ma.SetPosition('set',pos)
+                self.ra_ma.SetPosition('set',pos,msg=None)
+            else:
+                self.ra_ma.SetPosition('set',pos)
             self.current_pos.Servo = pos.Servo
 
     def RelativeCNCPosition(self, diffpos):
@@ -72,6 +76,7 @@ class Movement_Coordinator:
             self.SetPosition(newpos)    
 
     def LoadSubstrateHolder(self):
+        self.isPainting = False
         self.isBusy = True
         self.SetPosition(PositionsDict['LoadA'])
         self.SetPosition(PositionsDict['LoadB'])
@@ -82,6 +87,7 @@ class Movement_Coordinator:
         self.isBusy = False
 
     def UnloadSubstrateHolder(self):
+        self.isPainting = False
         self.isBusy = True
         self.SetPosition(PositionsDict['UnloadA'])
         self.SetPosition(PositionsDict['UnloadB'])
@@ -93,8 +99,12 @@ class Movement_Coordinator:
         self.isBusy = False
 
     def SwapNewSubstrate(self):
+        self.isPainting = False
         self.UnloadSubstrateHolder()
         self.LoadSubstrateHolder()
+
+    def BeginPainting(self):
+        self.isPainting = True
 
     def RunPump(self, addr):
         addr = int(addr)
@@ -155,13 +165,13 @@ class Movement_Coordinator:
             if isEmulating:
                 self.syr_ma.emulator_mode = True
         else:
-            self.syr_ma = None
-        self.PositionsDict = {'NeutralA':NeutralA,'NeutralB':NeutralB, 
-            'LoadA': LoadA, 'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,
-            'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC}
+            self.syr_ma = None        
         self.ActionsDict = {'Load':self.LoadSubstrateHolder,
-            'Unload':self.UnloadSubstrateHolder,'Swap':self.SwapNewSubstrate,
-            'Run':self.RunPump,'Stop':self.StopPump}
+            'Painting'
+            'Unload':self.UnloadSubstrateHolder,
+            'Swap':self.SwapNewSubstrate,
+            'Run':self.RunPump,
+            'Stop':self.StopPump}
         if(setupSerial and not isEmulating):
             self.SetupSerialIO()
 

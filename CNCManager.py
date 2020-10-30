@@ -12,13 +12,13 @@ class CNCManager(DeviceManagerBase):
         return super().ConnectToDevice(defPort='/dev/ttyUSB0',
         ports=ports, baud=115200, retmsg='echo:start')
 
-    def SendCommand(self, com, waitMsg = 'M84\n'):
-        super().SendCommand(com,waitMsg)
+    def SendCommand(self, com, msg = 'M84\n'):
+        super().SendCommand(com, waitMsg = msg)
 
-    def SetPosition(self,pos):
+    def SetPosition(self, pos, msg = 'M84\n'):
         if CNCPositionChanged(pos,self.lastpos):
             com = 'G1 X'+str(pos.X)+' Y'+str(pos.Y)+' Z'+str(pos.Z)+' E'+str(pos.E)
-            self.SendCommand(com)
+            self.SendCommand(com, msg)
             self.lastpos = pos
 
     def SetInitialState(self):

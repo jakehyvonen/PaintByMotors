@@ -57,9 +57,9 @@ class DeviceManagerBase():
             if waitMsg:
                 self.WaitForResponse()            
                 #workaround to trigger busy:processing response from Marlin
-                #'M84\n'
-                self.ser.write(waitMsg.encode())
-                self.WaitForResponse()
+                if waitMsg == 'M84\n'
+                    self.ser.write(waitMsg.encode())
+                    self.WaitForResponse()
         else:
             print('Emulator %s sending command: %s' % (self.name,com))
             self.sent_command_event.notify(com)
