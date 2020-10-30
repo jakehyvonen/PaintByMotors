@@ -44,10 +44,10 @@ class Xbox_Interface:
                 controller.button_x.when_released = self.on_button_released
                 # Button Trigger L events
                 controller.button_trigger_l.when_pressed = self.on_button_pressed
-                controller.button_trigger_l.when_released = self.on_button_released
                 # Button Trigger R events
                 controller.button_trigger_r.when_pressed = self.on_button_pressed
-                controller.button_trigger_r.when_released = self.on_button_released
+                # Start Button events
+                controller.button_start.when_pressed = self.on_button_pressed
 
                 # Left and right axis move event
                 controller.axis_l.when_moved = self.on_axis_moved

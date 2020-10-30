@@ -105,6 +105,8 @@ class Movement_Coordinator:
 
     def BeginPainting(self):
         self.isPainting = True
+        self.SetPosition(PositionsDict['Painting'])
+
 
     def RunPump(self, addr):
         addr = int(addr)

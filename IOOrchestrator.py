@@ -70,9 +70,12 @@ class IOOrchestrator:
                     self.mc.syr_ma.SendCommand(row[3])
                 i += 1
 
+    def EnterPaintingMode(self):
+        print('EnterPaintingMode()')      
+        self.mc.HandleCommand('Painting')  
+
     def StartRecordingXbox(self):
         print('RecordXbox()')      
-        self.mc.HandleCommand('Painting')       
         self.dbrecord.StartRun()
 
     def StopRecordingXbox(self):
@@ -107,66 +110,75 @@ class IOOrchestrator:
 
     def HandleAxisMove(self, axis):
         global axisDelay
-        if axisDelay:
-            #print('Waiting on AxisDelay')
-            pass
-        else:
-            #CNC AXIS
-            if(axis.name == 'axis_r'):
-                if(abs(axis.x) > 0.1):
-                    self.current_cnc_pos.X = MakeDec(axis.x)                    
-                else:
+        #block axis input when not painting
+        if self.mc.isPainting:
+            if axisDelay:
+                #print('Waiting on AxisDelay')
+                pass
+            else:
+                #CNC AXIS
+                if(axis.name == 'axis_r'):
+                    if(abs(axis.x) > 0.1):
+                        self.current_cnc_pos.X = MakeDec(axis.x)                    
+                    else:
+                        self.current_cnc_pos.X = 0
+                    if(abs(axis.y) > 0.1):
+                        self.current_cnc_pos.Y = MakeDec(axis.y)
+                    else:
+                        self.current_cnc_pos.Y = 0
+                    self.current_pos.CNC = self.current_cnc_pos
+                    self.mc.RelativeCNCPosition(self.current_cnc_pos)
+                    #reset positions after sending to avoid  
+                    #changing the position with other axis input
                     self.current_cnc_pos.X = 0
-                if(abs(axis.y) > 0.1):
-                    self.current_cnc_pos.Y = MakeDec(axis.y)
-                else:
                     self.current_cnc_pos.Y = 0
-                self.current_pos.CNC = self.current_cnc_pos
-                self.mc.RelativeCNCPosition(self.current_cnc_pos)
-                #reset positions after sending to avoid  
-                #changing the position with other axis input
-                self.current_cnc_pos.X = 0
-                self.current_cnc_pos.Y = 0
-                self.StartDelay()
-            #SERVO AXIS
-            if(axis.name == 'axis_l'):
-                if(axis.x > 0.1):
-                    self.current_servo_pos.M4 = 1
-                elif(axis.x < -0.1):
-                    self.current_servo_pos.M4 = -1
-                else:
-                    self.current_servo_pos.M4 = 0
-                if(axis.y > 0.1):
-                    self.current_servo_pos.M5 = 1
-                elif(axis.y < -0.1):
-                    self.current_servo_pos.M5 = -1
-                else:
-                    self.current_servo_pos.M5 = 0
-                self.current_pos.Servo = self.current_servo_pos
-                self.mc.RelativeServoPosition(self.current_servo_pos)
-                #reset positions after sending to avoid  
-                #changing the position with other axis input
-                self.current_servo_pos.X = 0
-                self.current_servo_pos.Y = 0
-                self.StartDelay()
+                    self.StartDelay()
+                #SERVO AXIS
+                if(axis.name == 'axis_l'):
+                    if(axis.x > 0.1):
+                        self.current_servo_pos.M4 = 1
+                    elif(axis.x < -0.1):
+                        self.current_servo_pos.M4 = -1
+                    else:
+                        self.current_servo_pos.M4 = 0
+                    if(axis.y > 0.1):
+                        self.current_servo_pos.M5 = 1
+                    elif(axis.y < -0.1):
+                        self.current_servo_pos.M5 = -1
+                    else:
+                        self.current_servo_pos.M5 = 0
+                    self.current_pos.Servo = self.current_servo_pos
+                    self.mc.RelativeServoPosition(self.current_servo_pos)
+                    #reset positions after sending to avoid  
+                    #changing the position with other axis input
+                    self.current_servo_pos.X = 0
+                    self.current_servo_pos.Y = 0
+                    self.StartDelay()
         
     def HandleButtonPress(self, button):
         msg = None
         if(button.name == 'button_trigger_l'):
-            msg = 'Swap'
-        elif(button.name == 'button_y'):
-            msg = 'Run,0'
-            self.mc.ra_ma.SendCommand("open")
-        elif(button.name == 'button_b'):
-            msg = 'Run,1'
-            self.mc.ra_ma.SendCommand("open")
-        elif(button.name == 'button_a'):
-            msg = 'Run,2'
-            self.mc.ra_ma.SendCommand("open")
-        elif(button.name == 'button_trigger_r'):
-            self.StopRecordingXbox()
-        elif(button.name == 'button_x'):
-            self.StartRecordingXbox()
+            if self.mc.isPainting:
+                print('No Swapping while painting senpai')
+            else:
+                msg = 'Swap'
+        elif(button.name == 'button_start'):
+            msg = 'Painting'
+        elif self.mc.isPainting:
+            if(button.name == 'button_y'):
+                msg = 'Run,0'
+                self.mc.ra_ma.SendCommand("open")
+            elif(button.name == 'button_b'):
+                msg = 'Run,1'
+                self.mc.ra_ma.SendCommand("open")
+            elif(button.name == 'button_a'):
+                msg = 'Run,2'
+                self.mc.ra_ma.SendCommand("open")
+            elif(button.name == 'button_trigger_r'):
+                self.StopRecordingXbox()
+                self.mc.isPainting = False
+            elif(button.name == 'button_x'):
+                self.StartRecordingXbox()
         if msg:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)
@@ -183,7 +195,8 @@ class IOOrchestrator:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)   
             #close the nozzle cap when not in use
-            self.mc.ra_ma.SendCommand('close')
+            if self.mc.syr_ma.ActivePumps():
+                self.mc.ra_ma.SendCommand('close')
 
     def HandleTerminalInput(self, var):
         if(var in self.ActionsDict.keys()):

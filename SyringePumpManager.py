@@ -39,13 +39,22 @@ class SyringePumpManager(DeviceManagerBase):
     
     def StartPumping(self, pump):
         print('StartPumping(): ' + str(pump.name))
+        pump.isPumping = True
         command = pump.address + 'RUN'
         self.SendCommand(command)
     
     def StopPumping(self, pump):
-        print('StopPumping()' + str(pump.name))    
+        print('StopPumping()' + str(pump.name))   
+        pump.isPumping = False 
         command = pump.address + 'STP'
         self.SendCommand(command)
+
+    def ActivePumps(self):
+        active = False
+        for p in self.Pumps:
+            if p.isPumping:
+                active = True
+        return active
 
     def SendCommand(self, com, getResponse = True, tryCount = 1):  
         super().SendCommand(com, term='\r')
@@ -127,7 +136,7 @@ class SyringePump:
             self.volDispensed = volDispensed
             self.rate = rate
             self.units = units
-            self.active = False
+            self.isPumping = False
 
 if __name__ == '__main__':
     manager = SyringePumpManager()
