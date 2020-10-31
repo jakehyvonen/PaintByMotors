@@ -162,7 +162,7 @@ class IOOrchestrator:
             else:
                 msg = 'Swap'
         elif(button.name == 'button_start'):
-            msg = 'Painting'
+            msg = 'Paint'
         elif self.mc.isPainting:
             if(button.name == 'button_y'):
                 msg = 'Run,0'

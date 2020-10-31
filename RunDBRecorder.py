@@ -38,7 +38,8 @@ class RunDBRecorder:
         values = (None,runName,dt.date.today())
         cursor.execute('INSERT INTO Runs VALUES (?,?,?)',values)
         conn.commit()
-        #this is bad practice and we should fetch run_id directly (but presently I'm too lazy)
+        cursor.execute('''SELECT Count() FROM Runs;''')
+        rows = cursor.fetchone()[0]
         self.activeRunId = rows + 1
 
     def AddCommandData(self, runId=None, time = None, cnc=None, ra=None, syr=None):

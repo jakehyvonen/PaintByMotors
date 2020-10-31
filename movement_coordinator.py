@@ -169,7 +169,7 @@ class Movement_Coordinator:
         else:
             self.syr_ma = None        
         self.ActionsDict = {'Load':self.LoadSubstrateHolder,
-            'Painting'
+            'Paint':self.BeginPainting,
             'Unload':self.UnloadSubstrateHolder,
             'Swap':self.SwapNewSubstrate,
             'Run':self.RunPump,
@@ -180,8 +180,9 @@ class Movement_Coordinator:
 def listenForCommands(command):
     print('heard a command: %s' % command)
 
-LowerCoatingLimit = SystemPosition(137,180,11,11,0,0,111,0)
-UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,177)
+#x,y LCL not zero because softlimit value could then be negative
+LowerCoatingLimit = SystemPosition(137,180,11,11,1,1,111,0)
+UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,333,0)
 
 def SoftLimit(pos):
     for property, value in vars(pos).items():
@@ -206,8 +207,8 @@ if __name__ == '__main__':
     #SoftLimit(LoadA)
     mc = Movement_Coordinator(
     'cnc',
-    #'ra',
-    #'syr',
+    'ra',
+    'syr',
     isEmulating=False
     )  
     while True:
