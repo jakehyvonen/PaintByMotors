@@ -33,7 +33,8 @@ def serial_ports():
 def ping_controller(defaultPort, ports=serial_ports(), baud=9600, 
 qrymsg=b'ping', retmsg='pong', trycount = 1, readsequence = '\n'):
     print('pinging serial with qrymsg: ' + qrymsg.decode())
-    if(defaultPort and ping_single_port(defaultPort,baud,qrymsg,retmsg,trycount,readsequence)):
+    if(defaultPort and defaultPort in ports 
+    and ping_single_port(defaultPort,baud,qrymsg,retmsg,trycount,readsequence)):
         print('connected to default port')
         return defaultPort
     else:        

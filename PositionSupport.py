@@ -74,7 +74,7 @@ UnloadB = SystemPosition(cnc=CNCPosition(39,0,342,0),
                 servo=ServoPosition(171,71,180,90))#
 UnloadC = SystemPosition(cnc=CNCPosition(39,0,342,-322),
                 servo=ServoPosition(171,71,180,90))#
-Painting = SystemPosition(cnc=CNCPosition(29,11,262,0),
+Painting = SystemPosition(cnc=CNCPosition(27,11,272,0),
                 servo=ServoPosition(137,180,33,90))#
 
 PositionsDict = {

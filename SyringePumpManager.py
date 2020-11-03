@@ -107,7 +107,9 @@ class SyringePumpManager(DeviceManagerBase):
             return False
 
     def Setup(self,ports=sc.serial_ports()):
-        print('Setup() SyringePumpManager')            
+        print('Setup() SyringePumpManager')    
+        for p in ports:
+            print('remaining port at syr_ma Setup(): ',p)        
         self.ConnectToDevice(ports)
         for p in self.Pumps:
             if not self.PumpIsTalking(p):

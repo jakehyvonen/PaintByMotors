@@ -19,13 +19,14 @@ class Movement_Coordinator:
             ports.remove(portToRemove)
             self.cnc_ma.SetInitialState()
             self.cnc_ma.SetPosition(PositionsDict['NeutralB'])
-        if(self.ra_ma):
-            portToRemove = self.ra_ma.ConnectToDevice(ports)
-            print('removing port: ' + str(portToRemove))
-            ports.remove(portToRemove)
-        if(self.syr_ma):
-            self.syr_ma.Setup(ports)
-        if(self.cnc_ma):
+            if(self.ra_ma):
+                portToRemove = self.ra_ma.ConnectToDevice(ports)
+                print('removing port: ' + str(portToRemove))
+                ports.remove(portToRemove)
+            if(self.syr_ma):
+                for p in ports:
+                    print('remaining port at syr_ma: ',p)
+                self.syr_ma.Setup(ports)
             time.sleep(1.1)
             #do this twice to position robo arm?
             self.SetPosition(PositionsDict['NeutralB'])
@@ -181,8 +182,8 @@ def listenForCommands(command):
     print('heard a command: %s' % command)
 
 #x,y LCL not zero because softlimit value could then be negative
-LowerCoatingLimit = SystemPosition(137,180,11,11,1,1,111,0)
-UpperCoatingLimit = SystemPosition(137,180,171,171,33,33,333,0)
+LowerCoatingLimit = SystemPosition(137,180,11,11,1,13,111,0)
+UpperCoatingLimit = SystemPosition(137,180,171,171,77,59,333,0)
 
 def SoftLimit(pos):
     for property, value in vars(pos).items():
