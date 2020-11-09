@@ -9,7 +9,7 @@ Servo elbow;//M3
 Servo wrist_rot;//M4
 Servo wrist_ver;//M5
 Servo gripper;//M6
-int del=11, M1=90, M2=11, M3=111, M4=1, M5=90, M6=73;
+int del=11, M1=163, M2=11, M3=111, M4=1, M5=90, M6=73;
 void setup() {  
   //Initialization functions and set up the initial position for Braccio
   //All the servo motors will be positioned in the "safety" position:

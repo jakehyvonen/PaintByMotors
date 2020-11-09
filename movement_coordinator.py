@@ -44,7 +44,9 @@ class Movement_Coordinator:
         if self.ra_ma and pos.Servo:
             if self.isPainting:
                 SoftLimit(pos.Servo)
-                self.ra_ma.SetPosition('set',pos,msg=None)
+                #we still need to wait for 'ok' because there
+                #are communication issues w/ roboarm.ino
+                self.ra_ma.SetPosition('set',pos)
             else:
                 self.ra_ma.SetPosition('set',pos)
             self.current_pos.Servo = pos.Servo

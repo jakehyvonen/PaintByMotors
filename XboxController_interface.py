@@ -46,6 +46,10 @@ class Xbox_Interface:
                 controller.button_trigger_l.when_pressed = self.on_button_pressed
                 # Button Trigger R events
                 controller.button_trigger_r.when_pressed = self.on_button_pressed
+                # Button Thumb L events
+                controller.button_thumb_l.when_pressed = self.on_button_pressed
+                # Button Thumb R events
+                controller.button_thumb_r.when_pressed = self.on_button_pressed
                 # Start Button events
                 controller.button_start.when_pressed = self.on_button_pressed
 

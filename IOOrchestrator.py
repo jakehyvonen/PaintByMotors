@@ -22,6 +22,7 @@ class IOOrchestrator:
         self.dbrecord = RunDBRecorder(dbname)
         self.xbox = xbox.Xbox_Interface()
         self.delay = 0.1
+        self.servoMultiplier = 6.0
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.current_cnc_pos = CNCPosition(0,0,0,0)
         self.current_servo_pos = ServoPosition(0,0,0,0)
@@ -48,6 +49,7 @@ class IOOrchestrator:
 
     def ReRunRun(self, runId):
         print('ReRunRun()')
+        self.mc.HandleCommand('Paint')
         rrcomms = self.dbrecord.FetchRunData(runId=runId)
         st = time.perf_counter()
         i=0
@@ -68,10 +70,11 @@ class IOOrchestrator:
                     print('row[3]: ', str(row[3]))
                     self.mc.syr_ma.SendCommand(row[3])
                 i += 1
+        self.mc.isPainting = False
 
     def EnterPaintingMode(self):
         print('EnterPaintingMode()')      
-        self.mc.HandleCommand('Painting')  
+        self.mc.HandleCommand('Paint')  
 
     def StartRecordingXbox(self):
         print('RecordXbox()')      
@@ -135,15 +138,15 @@ class IOOrchestrator:
                 #SERVO AXIS
                 if(axis.name == 'axis_l'):
                     if(axis.x > 0.1):
-                        self.current_servo_pos.M4 = 1
+                        self.current_servo_pos.M4 = 1*self.servoMultiplier
                     elif(axis.x < -0.1):
-                        self.current_servo_pos.M4 = -1
+                        self.current_servo_pos.M4 = -1*self.servoMultiplier
                     else:
                         self.current_servo_pos.M4 = 0
                     if(axis.y > 0.1):
-                        self.current_servo_pos.M5 = 1
+                        self.current_servo_pos.M5 = 1*self.servoMultiplier
                     elif(axis.y < -0.1):
-                        self.current_servo_pos.M5 = -1
+                        self.current_servo_pos.M5 = -1*self.servoMultiplier
                     else:
                         self.current_servo_pos.M5 = 0
                     self.current_pos.Servo = self.current_servo_pos
@@ -176,6 +179,10 @@ class IOOrchestrator:
             elif(button.name == 'button_trigger_r'):
                 self.StopRecordingXbox()
                 self.mc.isPainting = False
+            elif(button.name == 'button_thumb_l'):
+                self.mc.HandleCommand('NeutralArm')
+            elif(button.name == 'button_thumb_r'):
+                self.mc.HandleCommand('Painting')
             elif(button.name == 'button_x'):
                 self.StartRecordingXbox()
         if msg:

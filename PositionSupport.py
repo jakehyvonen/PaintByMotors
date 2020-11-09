@@ -60,6 +60,8 @@ NeutralA = SystemPosition(cnc=CNCPosition(0,0,151,0),
                 servo=ServoPosition(137,180,33,90))#
 NeutralB = SystemPosition(cnc=CNCPosition(0,0,151,0),
                 servo=ServoPosition(17,111,1,90))#
+NeutralArm = SystemPosition(servo=ServoPosition(137,180,33,90))
+
 LoadA = SystemPosition(cnc=CNCPosition(48,0,151,0),
                 servo=ServoPosition(11,111,0,90))#
 LoadB = SystemPosition(cnc=CNCPosition(48,0,7,0),
@@ -78,7 +80,7 @@ Painting = SystemPosition(cnc=CNCPosition(27,11,272,0),
                 servo=ServoPosition(137,180,33,90))#
 
 PositionsDict = {
-    'NeutralA':NeutralA,'NeutralB':NeutralB, 
+    'NeutralA':NeutralA,'NeutralB':NeutralB, 'NeutralArm':NeutralArm,
     'LoadA': LoadA, 'LoadB':LoadB,'LoadC':LoadC,'LoadD':LoadD,
     'UnloadA':UnloadA, 'UnloadB':UnloadB,'UnloadC':UnloadC,
     'Painting':Painting}
