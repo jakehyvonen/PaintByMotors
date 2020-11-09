@@ -5,6 +5,9 @@ import enum
 dia60mLsyringe = 'S26.59'
 diaquerybytes = b'00DIA\r'
 ETXbyte = b'\x03'
+#ToDo
+#add rate change functionality 00RAT11.1MM 
+#-->sets rate to 11.1 mL/min
 '''
 Note: if pump addresses are somehow reset, this won't work properly
 --> addresses would need to be re-set individually via serial_connection.py 

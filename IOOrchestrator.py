@@ -9,7 +9,7 @@ import threading
 from RunDBRecorder import *
 
 #ToDo
-#
+#fix issue going from Painting mode to Swap
 #
 home = expanduser('~')
 savedir = home + '/SIEData/'
@@ -201,7 +201,7 @@ class IOOrchestrator:
             print('msg: %s' % msg)
             self.mc.HandleCommand(msg)   
             #close the nozzle cap when not in use
-            if self.mc.syr_ma.ActivePumps():
+            if not self.mc.syr_ma.ActivePumps():
                 self.mc.ra_ma.SendCommand('close')
 
     def HandleTerminalInput(self, var):
