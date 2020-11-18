@@ -22,7 +22,7 @@ class IOOrchestrator:
         self.dbrecord = RunDBRecorder(dbname)
         self.xbox = xbox.Xbox_Interface()
         self.delay = 0.1
-        self.servoMultiplier = 6.0
+        self.servoMultiplier = 6
         self.current_pos = SystemPosition(0,0,0,0,0,0,0,0)
         self.current_cnc_pos = CNCPosition(0,0,0,0)
         self.current_servo_pos = ServoPosition(0,0,0,0)
@@ -178,7 +178,10 @@ class IOOrchestrator:
                 self.mc.ra_ma.SendCommand("open")
             elif(button.name == 'button_trigger_r'):
                 self.StopRecordingXbox()
-                self.mc.isPainting = False
+                self.mc.cnc_ma.ser.readlines()
+                self.mc.cnc_ma.ser.flushInput()
+                self.mc.HandleCommand('Painting')
+                self.mc.isPainting = False                
             elif(button.name == 'button_thumb_l'):
                 self.mc.HandleCommand('NeutralArm')
             elif(button.name == 'button_thumb_r'):

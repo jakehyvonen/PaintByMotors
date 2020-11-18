@@ -9,7 +9,7 @@ Servo elbow;//M3
 Servo wrist_rot;//M4
 Servo wrist_ver;//M5
 Servo gripper;//M6
-int del=11, M1=163, M2=11, M3=111, M4=1, M5=90, M6=73;
+int del=11, M1=37, M2=11, M3=111, M4=1, M5=90, M6=73;
 void setup() {  
   //Initialization functions and set up the initial position for Braccio
   //All the servo motors will be positioned in the "safety" position:
@@ -79,19 +79,19 @@ void loop() {
     {
       //String parseString = command.substring(4,7);
       //M1 = parseString.toInt();
-      M1 = 77;
+      M1 = 51;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
       Serial.println("ok");
     }
     else if(command.substring(0,5)=="rinse")
     {
-      M1 = 160;
+      M1 = 90;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6); 
       Serial.println("ok");
     }
     else if(command.substring(0,5)=="close")
     {
-      M1 = 163;
+      M1 = 37;
       Braccio.ServoMovement(del, M1, M2, M3, M4, M5, M6);
       Serial.println("ok");
     }

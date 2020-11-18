@@ -104,6 +104,7 @@ class Movement_Coordinator:
 
     def SwapNewSubstrate(self):
         self.isPainting = False
+        self.SetPosition(PositionsDict['NeutralA'])
         self.UnloadSubstrateHolder()
         self.LoadSubstrateHolder()
 
@@ -122,6 +123,7 @@ class Movement_Coordinator:
         self.syr_ma.StopPumping(pump)
 
     def HandleCommand(self, com):
+        print('HandleCommand(): ', com)
         var = com
         data = None
         l = com.split(',')
